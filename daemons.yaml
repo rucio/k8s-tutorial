@@ -1,0 +1,178 @@
+abacusAccountCount: 1
+abacusRseCount: 1
+conveyorTransferSubmitterCount: 1
+conveyorPollerCount: 1
+conveyorFinisherCount: 1
+hermesCount: 0
+judgeCleanerCount: 1
+judgeEvaluatorCount: 1
+judgeInjectorCount: 1
+judgeRepairerCount: 1
+undertakerCount: 1
+reaper2Count: 1
+
+abacusAccount:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+abacusRse:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+reaper2:
+  greedy: 1
+  threads: 1
+  sleepTime: 60
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "100m"
+
+undertaker:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+conveyorTransferSubmitter:
+  threads: 1
+  sleepTime: 10
+  activities: "'Express' 'Functional Test' 'User Subscriptions'"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+conveyorPoller:
+  threads: 1
+  sleepTime: 10
+  olderThan: 0
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+conveyorFinisher:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+judgeCleaner:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+judgeEvaluator:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+
+judgeRepairer:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+
+judgeInjector:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+reaper:
+  workers: 60
+  threadsPerWorker: 1
+  greedy: 1
+
+image:
+  tag: release-1.23.11_py3
+  pullPolicy: Always
+
+ftsRenewal:
+  enabled: 1
+  image:
+    repository: rucio/fts-cron
+    tag: latest
+  vo: "tutorial"
+  voms: "tutorial"
+  servers: "https://fts:8446"
+
+config:
+  database:
+    default: postgresql://rucio:secret@postgres-postgresql/rucio
+    schema: test
+
+  messaging_hermes:
+    username: "hermes"
+    password: "supersecret"
+    nonssl_port: "61613"
+    use_ssl: "False"
+    destination: "/queue/events"
+    brokers: "activemq"
+
+  conveyor:
+    scheme: "gsiftp,root,https,davs"
+    transfertool: "fts3"
+    ftshosts: "https://fts:8446"
+    cacert: "/opt/certs/ca.pem"
+    usercert: "/opt/proxy/x509up"
+
+  policy:
+    permission: "generic"
+    schema: "generic"
+    lfn2pfn_algorithm_default: "hash"
+
+  monitor:
+    carbon_server: "rucio-graphite-prod.cern.ch"
+    carbon_port: "8125"
+    user_scope: "rucio-doma"

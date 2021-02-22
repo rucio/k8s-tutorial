@@ -1,0 +1,23 @@
+ apiVersion: v1
+ kind: Pod
+ metadata:
+   name: init
+   labels:
+     app: rucio
+ spec:
+   restartPolicy: Never
+   containers:
+     - name: init
+       image: rucio/rucio-init:release-1.23.11_py3
+       imagePullPolicy: Always
+       env:
+         - name: RUCIO_CFG_DATABASE_DEFAULT
+           value: postgresql://rucio:secret@postgres-postgresql/rucio
+         - name: RUCIO_CFG_DATABASE_SCHEMA
+           value: test
+         - name: RUCIO_CFG_BOOTSTRAP_USERPASS_IDENTITY
+           value: tutorial
+         - name: RUCIO_CFG_BOOTSTRAP_USERPASS_PWD
+           value: secret1R
+         - name: RUCIO_PRINT_CFG
+           value: "true"

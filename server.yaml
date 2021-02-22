@@ -1,0 +1,35 @@
+replicaCount: 1
+## authReplicaCount gives the number of authentication server pods to run
+authReplicaCount: 1
+traceReplicaCount: 0
+
+image:
+  repository: rucio/rucio-server
+  tag: release-1.23.11_py3
+
+config:
+  database:
+    default: "postgresql://rucio:secret@postgres-postgresql/rucio"
+    schema: "test"
+
+ingress:
+  enabled: true
+  annotations:
+          #nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # kubernetes.io/ingress.class: traefik
+    # traefik.ingress.kubernetes.io/frontend-entry-points: http
+    # traefik.ingress.kubernetes.io/redirect-entry-point: https
+  path: /
+  hosts: 
+    - rucio-server.info
+
+authIngress:
+  enabled: true
+  annotations:
+          #nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # kubernetes.io/ingress.class: traefik
+    # traefik.ingress.kubernetes.io/frontend-entry-points: http
+    # traefik.ingress.kubernetes.io/redirect-entry-point: https
+  path: /
+  hosts: 
+    - rucio-auth.info
