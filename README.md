@@ -53,6 +53,8 @@
 
 ## Installation of Rucio + FTS + Storage
 
+_Before executing the following commands, please change directory to the cloned repo location_
+
 * Install the main Rucio database (PostgreSQL):
 
       helm install postgres bitnami/postgresql -f postgres_values.yaml
