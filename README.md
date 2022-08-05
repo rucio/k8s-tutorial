@@ -53,41 +53,59 @@
 
 ## Installation of Rucio + FTS + Storage
 
-_Before executing the following commands, please change directory to the cloned repo location_
+_NOTE: Before executing the following commands, please change directory to the cloned repo location_
 
-* Install the main Rucio database (PostgreSQL):
+_NOTE: Replace the pod IDs with the ones from your instance, they change every time_
+
+* Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find&remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
+
+* Install a fresh new Rucio database (PostgreSQL).
 
       helm install postgres bitnami/postgresql -f postgres_values.yaml
+
+* Wait for PostgreSQL to finish starting. Output should be STATUS:Running.
+
+      kubectl get pods
 
 * Run init container once to setup the Rucio database once the PostgreSQL container is running:
 
       kubectl apply -f init-pod.yaml
 
-* Install the Rucio server:
+* Watch the output of the init container to check if everything is fine. Pod should finish with STATUS:Completed
+
+      kubectl logs -f init
+
+* Install the Rucio server and wait for it to come online:
 
       helm install server rucio/rucio-server -f server.yaml
+      
+      kubectl logs -f server-rucio-server-7fffc4665d-ts67v rucio-server
 
 * Prepare a client container for interactive use:
 
       kubectl apply -f client.yaml
 
-* Jump into the client container and check if the clients are working:
+* Once the client container is in STATUS:Running, you can jump into it and check if the clients are working:
 
       kubectl exec -it client /bin/bash
 
       rucio whoami
 
-* Install the XRootD storage systems:
+* Install the XRootD storage systems. This will start three instances of them.
 
       kubectl apply -f xrd.yaml
 
-* Install the FTS database (MySQL):
+* Install the FTS database (MySQL) and wait for it to come online.
 
       kubectl apply -f ftsdb.yaml
+      
+      kubectl logs -f fts-mysql-db7988d96-gn6dw
 
 * Install FTS, once the FTS database container is up and running:
 
       kubectl apply -f fts.yaml
+      
+      kubectl logs -f fts-server-7cb5d7c789-scg6c
 
 * Install the Rucio daemons:
 
