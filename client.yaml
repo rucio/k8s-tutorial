@@ -31,7 +31,7 @@ metadata:
 spec:
   containers:
   - name: client
-    image: rucio/rucio-clients:release-1.23.11_py3
+    image: rucio/rucio-clients:latest
     volumeMounts:
     - name: usercert
       mountPath: /tmp/usercert.pem
