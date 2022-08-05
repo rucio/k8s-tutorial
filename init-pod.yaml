@@ -8,7 +8,7 @@
    restartPolicy: Never
    containers:
      - name: init
-       image: rucio/rucio-init:release-1.23.11_py3
+       image: rucio/rucio-init:latest
        imagePullPolicy: Always
        env:
          - name: RUCIO_CFG_DATABASE_DEFAULT
