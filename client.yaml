@@ -39,15 +39,11 @@ spec:
     - name: userkey
       mountPath: /tmp/userkey.pem
       subPath: userkey.pem
-    #- name: x509up
-    #  mountPath: /tmp/x509up
-    #  subPath: x509up
-    #  readOnly: False
     - name: ca
       mountPath: /etc/grid-security/certificates/5fca1cb1.0
       subPath: ca.pem
     command: ["/bin/bash"]
-    args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/usercert.pem /opt/rucio/etc/usercert.pem; cp /tmp/userkey.pem /opt/rucio/etc/userkey.pem; cp /tmp/x509up /opt/rucio/etc/x509up; /opt/user/rucio_init.sh; while true; do echo hello; sleep 3;done"]
+    args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/usercert.pem /opt/rucio/etc/usercert.pem; cp /tmp/userkey.pem /opt/rucio/etc/userkey.pem; chmod 400 /opt/rucio/etc/userkey.pem; echo ready; while true; do sleep 60; done"]
     env:
     - name: RUCIO_CFG_RUCIO_HOST
       value: http://server-rucio-server
@@ -73,8 +69,6 @@ spec:
       value: /opt/rucio/etc/usercert.pem
     - name: X509_USER_KEY
       value: /opt/rucio/etc/userkey.pem
-    #- name: X509_USER_PROXY
-    #  value: /opt/rucio/etc/x509up
   volumes:
   - name: usercert
     secret:
@@ -82,10 +76,6 @@ spec:
   - name: userkey
     secret:
       secretName: clients-user-key
-      defaultMode: 0400
-  #- name: x509up
-  #  secret:
-  #    secretName: daemons-rucio-x509up
   - name: ca
     secret:
       secretName: clients-rucio-ca-bundle

@@ -187,7 +187,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       rucio add-rule test:container 1 XRD3
 
-* Query the status of the rule
+* Query the status of the rule until it is completed. Note that the daemons are running with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, so this will take a bit. You can always watch the output of the daemon containers to see what they are doing.
 
       rucio rule-info <rule_id>
 

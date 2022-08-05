@@ -6,8 +6,7 @@ image:
 persistence:
   enabled: false
 
-postgresqlUsername: rucio
-
-postgresqlPassword: secret
-
-postgresqlDatabase: rucio
+auth:
+  username: rucio
+  password: secret
+  database: rucio
