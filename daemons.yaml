@@ -135,7 +135,7 @@ reaper:
   greedy: 1
 
 image:
-  tag: release-1.23.11_py3
+  tag: latest
   pullPolicy: Always
 
 ftsRenewal:
@@ -173,6 +173,6 @@ config:
     lfn2pfn_algorithm_default: "hash"
 
   monitor:
-    carbon_server: "rucio-graphite-prod.cern.ch"
+    carbon_server: "rucio"
     carbon_port: "8125"
-    user_scope: "rucio-doma"
+    user_scope: "tutorial"
