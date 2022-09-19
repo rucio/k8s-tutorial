@@ -173,6 +173,4 @@ config:
     lfn2pfn_algorithm_default: "hash"
 
   monitor:
-    carbon_server: "rucio"
-    carbon_port: "8125"
     user_scope: "tutorial"
