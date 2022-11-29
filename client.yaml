@@ -33,6 +33,10 @@ metadata:
   labels:
     app: client
 spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
   containers:
   - name: client
     image: rucio/rucio-clients:latest
@@ -47,7 +51,7 @@ spec:
       mountPath: /etc/grid-security/certificates/5fca1cb1.0
       subPath: ca.pem
     - name: clientvolumeresource
-      mountPath: /home/user
+      mountPath: /home/user/data
     command: ["/bin/bash"]
     args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/usercert.pem /opt/rucio/etc/usercert.pem; cp /tmp/userkey.pem /opt/rucio/etc/userkey.pem; chmod 400 /opt/rucio/etc/userkey.pem; echo ready; while true; do sleep 60; done"]
     env:
