@@ -115,10 +115,6 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       helm install daemons rucio/rucio-daemons -f daemons.yaml -n rucio
 
-* (Run FTS storage authentication delegation once:)
-
-      kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
-
 ## Rucio usage
 
 * Jump into the client container
