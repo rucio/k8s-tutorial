@@ -139,7 +139,7 @@ image:
   pullPolicy: Always
 
 ftsRenewal:
-  enabled: 1
+  enabled: 0
   image:
     repository: rucio/fts-cron
     tag: latest
