@@ -27,7 +27,7 @@
       helm repo add bitnami https://charts.bitnami.com/bitnami
       helm repo add rucio https://rucio.github.io/helm-charts
 
-* :alert: Create a rucio namespace in order not to conflict with posible other services on the cluster:
+* :warning: Create a rucio namespace in order not to conflict with posible other services on the cluster:
 
       kubectl create namespace rucio
 
