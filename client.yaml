@@ -46,6 +46,8 @@ spec:
     - name: ca
       mountPath: /etc/grid-security/certificates/5fca1cb1.0
       subPath: ca.pem
+    - name: clientvolumeresource
+      mountPath: /home/user
     command: ["/bin/bash"]
     args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/usercert.pem /opt/rucio/etc/usercert.pem; cp /tmp/userkey.pem /opt/rucio/etc/userkey.pem; chmod 400 /opt/rucio/etc/userkey.pem; echo ready; while true; do sleep 60; done"]
     env:
@@ -84,5 +86,20 @@ spec:
     secret:
       secretName: clients-rucio-ca-bundle
       defaultMode: 0644
-     
-
+  - name: clientvolumeresource
+    persistentVolumeClaim:
+      claimName: client-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: client-pvc
+  namespace: rucio
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+---
