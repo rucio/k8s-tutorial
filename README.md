@@ -202,3 +202,13 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       rucio add-dataset test:dataset3
       rucio attach test:dataset3 test:file4
+
+# Copy files from local
+
+We added a PVC on the the client pod. It mounts `/home/user/data` with write permission for `user`.
+
+To upload a local file:
+
+```
+kubectl cp <myfile> rucio/client:/home/user/data
+```
