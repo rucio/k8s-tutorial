@@ -115,6 +115,13 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       helm install daemons rucio/rucio-daemons -f daemons.yaml -n rucio
 
+* (Run FTS storage authentication delegation once:)
+
+      # kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
+
+  This is commented out because cron has been disabled in the `daemons.yaml` file.
+  This may result in things stopping after a while when the certificate used to connect to FTS is expired and not renewed.
+
 ## Rucio usage
 
 * Jump into the client container
