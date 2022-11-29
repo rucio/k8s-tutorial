@@ -8,6 +8,8 @@ image:
   tag: latest
 
 config:
+  api:
+    endpoints: "accountlimits, accounts, archives, config, credentials, dids, export, heartbeats, identities, import, lifetime_exceptions, locks, meta, ping, redirect, replicas, requests, rses, rules, scopes, subscriptions"
   database:
     default: "postgresql://rucio:secret@postgres-postgresql/rucio"
     schema: "test"
