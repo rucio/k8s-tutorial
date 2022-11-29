@@ -69,7 +69,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Wait for PostgreSQL to finish starting. Output should be STATUS:Running.
 
-      kubectl get pods
+      kubectl get pods -n rucio
 
 * Run init container once to setup the Rucio database once the PostgreSQL container is running:
 
@@ -77,7 +77,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Watch the output of the init container to check if everything is fine. Pod should finish with STATUS:Completed
 
-      kubectl logs -f init
+      kubectl logs -f init -n rucio
 
 * Install the Rucio server and wait for it to come online:
 
@@ -91,7 +91,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Once the client container is in STATUS:Running, you can jump into it and check if the clients are working:
 
-      kubectl exec -it client /bin/bash
+      kubectl exec -n rucio -it client /bin/bash
 
       rucio whoami
 
