@@ -30,19 +30,6 @@ data:
   hostcert: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMrakNDQWVLZ0F3SUJBZ0lVVlhwWnhmdGFVTXdyd2drNndZUjFjR2wwbHAwd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0h6RWRNQnNHQTFVRUF3d1VVblZqYVc4Z1JHVjJaV3h2Y0cxbGJuUWdRMEV3SGhjTk1qQXdNekExTURreQpNREl3V2hjTk5EY3dOekl4TURreU1ESXdXakFQTVEwd0N3WURWUVFEREFSNGNtUXpNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFzL2JQQUNOb2FvdVV3VHFTVEJra0N5TEswaEx2Uit6U3JjeTIKR05wREtGOUxnVnB6OTZxbXgyUWZJTkIvTDhqbVdkWG9MbDQwN0tyZUpEOVRyRXBrK2VXTmhuRi9ESHRSaG5DcApjeG53bWVOZ1JNRFFOaldZcFRUUEdvZGJKbTJ6c0grVzk2N2NXZGpvdlN2ODhVY2lsRk1sQVRBZ1FuRFpPbEhJCkNrTUhDUldBS1NtZmdyN0FrbFBaM20ybmgrcWN0ZElzN0FBRDUxMjllbnl0Wkt6dEFHemloQ0JhUi9tbXMvUW4KSnFkU3hMNTFNUlo4T1Rrb3RPYnBuOThvTTVGU25CdkFXTGMyT2NlaFhEbm1td0I5Qm0rNVlQNFN5NjBFVDBMbwpaWXB4cmtaSlhlRUdXTkl5am5kc3dwR0FNMUNJalZHOTdQVy84MmRkNEI0dmxzWFRyd0lEQVFBQm96NHdQREE2CkJnTlZIUkVFTXpBeGdnUjRjbVF6Z2dsc2IyTmhiR2h2YzNTQ0huaHlaRE11WkdWbVlYVnNkQzV6ZG1NdVkyeDEKYzNSbGNpNXNiMk5oYkRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVAxekxZOHRINkIrSzlnU2FyRWxFaGRjcgo3S3dsWURLVWVJaFJpTXVhWEVweG5jcXJVcnJrSUxuK2RhVUlRdHNkcG5tU0tWMHZhNTdtV0JybFdFTW1vdmNkCkFRNVZub3d4U09UWkJ4VmpoQkZmNUNiMGNMa2E3MEcydTRpS2d5WmtaZ3IzeG82UkZCTmtKY2phM2twZ3hjSHcKUlJPY0dzcTQ4VWkzV3Nhdk1HV28zSkdIYTZWVXdNRktCRDF1M0Qvdkd6d04vQlJTOHNpSmtkUUtEckdlbHE0RQo2d01ad0R1TTcrZUZULzFOWjFZajg5eTZFQlZKWWJJd0VkM0dJbmxvNkh4cEpQT0grMVhFbG9US3NnN1lTcE96Ci9SNEpuWmpEeFZYY00vZG9qT1R6dWp6cU5lL1NXOHdHRGxFdExDT1BtMkNSZU9MaWozRTNya3IrM28wSVhBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: xrd1-pvc
-  namespace: rucio
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
 kind: Pod
 metadata:
   name: xrd1
@@ -67,8 +54,6 @@ spec:
         - name: hostkey
           mountPath: /tmp/xrdkey.pem
           subPath: xrdkey.pem
-        - name: xrdvolumeresource
-          mountPath: /home
   volumes:
   - name: hostcert
     secret:
@@ -82,9 +67,6 @@ spec:
       items:
       - key: hostkey
         path: xrdkey.pem
-  - name: xrdvolumeresource
-    persistentVolumeClaim:
-      claimName: xrd1-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -129,8 +111,6 @@ spec:
         - name: hostkey
           mountPath: /tmp/xrdkey.pem
           subPath: xrdkey.pem
-        - name: xrdvolumeresource
-          mountPath: /home
   volumes:
   - name: hostcert
     secret:
@@ -144,9 +124,6 @@ spec:
       items:
       - key: hostkey
         path: xrdkey.pem
-  - name: xrdvolumeresource
-    persistentVolumeClaim:
-      claimName: xrd1-pvc
 ---
 apiVersion: v1
 kind: Service
