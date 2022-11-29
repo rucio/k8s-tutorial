@@ -15,7 +15,7 @@
 * Install minikube
 
       https://kubernetes.io/docs/tasks/tools/install-minikube/
-	  https://minikube.sigs.k8s.io/docs/start/
+	https://minikube.sigs.k8s.io/docs/start/
 
 * Start minikube with extra RAM:
 
@@ -26,6 +26,10 @@
       helm repo add stable https://charts.helm.sh/stable
       helm repo add bitnami https://charts.bitnami.com/bitnami
       helm repo add rucio https://rucio.github.io/helm-charts
+
+* :alert: Create a rucio namespace in order not to conflict with posible other services on the cluster:
+
+      kubectl create namespace rucio
 
 ## Some helpful commands
 
@@ -61,7 +65,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Install a fresh new Rucio database (PostgreSQL).
 
-      helm install postgres bitnami/postgresql -f postgres_values.yaml
+      helm install postgres bitnami/postgresql -f postgres_values.yaml -n rucio
 
 * Wait for PostgreSQL to finish starting. Output should be STATUS:Running.
 
@@ -77,7 +81,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Install the Rucio server and wait for it to come online:
 
-      helm install server rucio/rucio-server -f server.yaml
+      helm install server rucio/rucio-server -f server.yaml -n rucio
       
       kubectl logs -f server-rucio-server-7fffc4665d-ts67v rucio-server
 
@@ -109,9 +113,9 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Install the Rucio daemons:
 
-      helm install daemons rucio/rucio-daemons -f daemons.yaml
+      helm install daemons rucio/rucio-daemons -f daemons.yaml -n rucio
 
-* Run FTS storage authentication delegation once:
+* (Run FTS storage authentication delegation once:)
 
       kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
 

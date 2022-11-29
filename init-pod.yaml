@@ -2,6 +2,7 @@
  kind: Pod
  metadata:
    name: init
+   namespace: rucio
    labels:
      app: rucio
  spec:
