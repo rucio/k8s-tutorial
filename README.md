@@ -50,6 +50,10 @@
 * Shut down minikube:
 
       minikube stop
+* For more useful commands:
+1. kubectl : [https://kubernetes.io/docs/reference/kubectl/cheatsheet/](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+2. helm : [https://helm.sh/docs/helm/](https://helm.sh/docs/helm/)
+3. minikube : [https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4)
 
 ## Installation of Rucio + FTS + Storage
 
@@ -57,7 +61,7 @@ _NOTE: Before executing the following commands, please change directory to the c
 
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
-* Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find&remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
+* Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find and remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
 
 * Install a fresh new Rucio database (PostgreSQL).
 
@@ -99,13 +103,13 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       kubectl apply -f ftsdb.yaml
       
-      kubectl logs -f fts-mysql-db7988d96-gn6dw
+      kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
 
 * Install FTS, once the FTS database container is up and running:
 
       kubectl apply -f fts.yaml
       
-      kubectl logs -f fts-server-7cb5d7c789-scg6c
+      kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
 
 * Install the Rucio daemons:
 
