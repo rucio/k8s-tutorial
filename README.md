@@ -104,12 +104,18 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
       kubectl apply -f ftsdb.yaml
       
       kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
+      
+for windows:
+      kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-mysql" | sed "s/^pod\///")
 
 * Install FTS, once the FTS database container is up and running:
 
       kubectl apply -f fts.yaml
       
       kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
+      
+for windows:
+      kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-server" | sed "s/^pod\///")
 
 * Install the Rucio daemons:
 
