@@ -85,7 +85,7 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
       helm install server rucio/rucio-server -f server.yaml
       
       RUCIO_SERVER=$(kubectl get pods | grep ^server-rucio-server- | grep -v auth- | awk '{print $1}')
-      echo "*${RUCIO_SERVER}*"
+      echo ${RUCIO_SERVER}
       kubectl logs -f ${RUCIO_SERVER} rucio-server
 
 * Prepare a client container for interactive use:
