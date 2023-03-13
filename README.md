@@ -29,9 +29,12 @@
 
 ## Some helpful commands
 
-* Activate kubectl bash completion:
+* Activate kubectl completion:
 
+      # Bash
       source <(kubectl completion bash)
+      # Zsh
+      source <(kubectl completion zsh)
 
 * View all containers:
 
