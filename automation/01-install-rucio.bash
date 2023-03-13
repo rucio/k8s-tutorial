@@ -2,12 +2,64 @@
 set -e
 
 # Minikube
-# Possible values for memory: max | format: <number>[<unit>], where unit = b, k, m or g, e.g., 4000mb
-MINIKUBE_MEMORY_RAM=8000mb
-# Possible values for CPUs: max | 1, 2, 3, 4, 5, ...
-MINIKUBE_CPU=4
+MINIKUBE_ARGS=()
+if [[ -n "${MINIKUBE_MEMORY}" ]]; then
+  MINIKUBE_ARGS+=("--memory=${MINIKUBE_MEMORY}")
+fi
+if [[ -n "${MINIKUBE_CPU}" ]]; then
+  MINIKUBE_ARGS+=("--cpus=${MINIKUBE_CPU}")
+fi
 
-# TODO: Add help menu when the user put --help. Show the usage of the env variables
+display_help() {
+  echo >&2 "▄▄▄▄▄▄▄▄▄▄▄▄"
+  echo >&2 "█   HELP   █"
+  echo >&2 "▀▀▀▀▀▀▀▀▀▀▀▀"
+  echo >&2 ""
+  echo >&2 "Usage ▶ $0"
+  echo >&2 ""
+  echo >&2 "Minikube"
+  echo >&2 "════════"
+  echo >&2 "Minikube accepts two parameters, the amount of memory and the number of CPUs."
+  echo >&2 "  Memory:"
+  echo >&2 "    - max"
+  echo >&2 "    - format: <number>[<unit>], where unit = b, k, m or g, e.g., 4000mb"
+  echo >&2 "  CPUs:"
+  echo >&2 "    - max"
+  echo >&2 "    - 1, 2, 3, 4, 5, …, e.g., 8"
+  echo >&2 ""
+  echo >&2 "  Usage"
+  echo >&2 "  ━━━━━"
+  echo >&2 "  To set up these parameters, need to use environment variables: MINIKUBE_MEMORY or MINIKUBE_CPU."
+  echo >&2 "  Usage ▶ export MINIKUBE_MEMORY=5000mb MINIKUBE_CPU=3; $0"
+  echo >&2 "  Usage ▶ export MINIKUBE_CPU=max; $0"
+  echo >&2 "  Usage ▶ export MINIKUBE_MEMORY=max; $0"
+  echo >&2 ""
+  echo >&2 "  Clean environment variables"
+  echo >&2 "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo >&2 "  The unset command, removes the environment variable"
+  echo >&2 "  Usage ▶ unset MINIKUBE_MEMORY MINIKUBE_CPU"
+  echo >&2 ""
+  echo >&2 "  Actual value for environment variables"
+  echo >&2 "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo >&2 "  Currently, these are the parameters which will set in the minikube. Blank means not arguments."
+  echo >&2 "  ▶ minikube start ${MINIKUBE_ARGS[*]}"
+}
+
+case "$1" in
+-h | --help)
+  display_help
+  exit 0
+  ;;
+--) # End of all options
+  shift
+  ;;
+-*) # Error
+  echo "Error: Unknown option: $1" >&2
+  display_help
+  exit 1
+  ;;
+esac
+
 echo "# --------------------------------------"
 echo "# Check installed packages"
 echo "# --------------------------------------"
@@ -57,10 +109,9 @@ MINIKUBE_HAS_NOT_PROFILE="The minikube does not have a profile. It will create a
 minikube status | grep "not found" &>/dev/null && {
   echo "${MINIKUBE_HAS_NOT_PROFILE}"
   minikube status || true
-  minikube start --memory="${MINIKUBE_MEMORY_RAM}" --cpus="${MINIKUBE_CPU}"
+  minikube start "${MINIKUBE_ARGS[@]}"
 }
 
-exit 0
 echo "┌─────────────────────────────────────┐"
 echo "⟾ Check default namespace for kubectl │"
 echo "└─────────────────────────────────────┘"
@@ -112,7 +163,7 @@ echo "└────────────────┘"
 minikube status | grep "Stopped" &>/dev/null && {
   echo "${MINIKUBE_HAS_KUBERNETES}"
   minikube status || true
-  minikube start --memory="${MINIKUBE_MEMORY_RAM}" --cpus="${MINIKUBE_CPU}"
+  minikube start "${MINIKUBE_ARGS[@]}"
 }
 
 echo "┌────────────────────────┐"
