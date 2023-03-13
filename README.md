@@ -29,13 +29,16 @@
 
 ## Some helpful commands
 
-* Activate kubectl bash completion:
+* Activate kubectl completion:
 
+      # Bash
       source <(kubectl completion bash)
+      # Zsh
+      source <(kubectl completion zsh)
 
 * View all containers:
 
-      kubectl get pods
+      kubectl get pods / kubectl get pods --all-namespaces
 
 * View/Tail logfiles of pod:
 
@@ -50,7 +53,7 @@
 * Shut down minikube:
 
       minikube stop
-      
+
 * For more useful commands:
 1. kubectl : [https://kubernetes.io/docs/reference/kubectl/cheatsheet/](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 2. helm : [https://helm.sh/docs/helm/](https://helm.sh/docs/helm/)
@@ -64,6 +67,17 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 * Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find and remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
 
+* If at any point `helm` fails to install, before re-installing, remove the previous failed installation by
+  ```bash
+  helm list # list all helm installations
+  helm delete $installation
+  ```
+  You might also get errors that a `job` also exists. You can easily remove this by,
+  ```bash
+  kubectl get jobs # get all jobs
+  kubectl delete jobs/$jobname
+  ```
+
 * Install a fresh new Rucio database (PostgreSQL).
 
       helm install postgres bitnami/postgresql -f postgres_values.yaml
@@ -72,6 +86,15 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
       kubectl get pods
 
+  On bash/fish/zsh shells, you can also get the status of the job updated in real-time by
+  ```bash
+  (TOWATCH=postgres; watch "kubectl get pods --all-namespaces --no-headers |  awk '{if (\$2 ~ \"$TOWATCH\") print \$0}'")
+  ```
+  Here the fourth column represents the status.
+
+  Tip: To watch the status any other install, just change value of `TOWATCH` from `postgres` to the name of your current install.
+
+
 * Run init container once to setup the Rucio database once the PostgreSQL container is running:
 
       kubectl apply -f init-pod.yaml
@@ -79,6 +102,11 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 * Watch the output of the init container to check if everything is fine. Pod should finish with STATUS:Completed
 
       kubectl logs -f init
+
+  or on bash/fish/zsh shells by
+  ```bash
+  (TOWATCH=init; watch "kubectl get pods --all-namespaces --no-headers |  awk '{if (\$2 ~ \"$TOWATCH\") print \$0}'")
+  ```
 
 * Install the Rucio server and wait for it to come online:
 
@@ -105,19 +133,21 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 * Install the FTS database (MySQL) and wait for it to come online.
 
       kubectl apply -f ftsdb.yaml
-      
+
       kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
-      
+
 For Windows:
+      
       kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-mysql" | sed "s/^pod\///")
 
 * Install FTS, once the FTS database container is up and running:
 
       kubectl apply -f fts.yaml
-      
+
       kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
-      
+
 For Windows:
+
       kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-server" | sed "s/^pod\///")
 
 * Install the Rucio daemons:
@@ -134,7 +164,7 @@ For Windows:
 
       kubectl exec -it client /bin/bash
 
-* Create the RSEs
+* Create the Rucio Storage Elements (RSEs) by
 
       rucio-admin rse add XRD1
       rucio-admin rse add XRD2
@@ -151,6 +181,8 @@ For Windows:
       rucio-admin rse set-attribute --rse XRD1 --key fts --value https://fts:8446
       rucio-admin rse set-attribute --rse XRD2 --key fts --value https://fts:8446
       rucio-admin rse set-attribute --rse XRD3 --key fts --value https://fts:8446
+
+  Note that `8446` is the port exposed by the `fts-server` pod. You can easily view ports opened by a pod by `kubectl describe pod PODNAME`.
 
 * Fake a full mesh network
 
@@ -203,6 +235,11 @@ For Windows:
 * Query the status of the rule until it is completed. Note that the daemons are running with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, so this will take a bit. You can always watch the output of the daemon containers to see what they are doing.
 
       rucio rule-info <rule_id>
+
+  For this command, get the `rule_id` by,
+  ```bash
+  rucio list-rules test:container
+  ```
 
 * Add some more complications
 
