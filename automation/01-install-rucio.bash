@@ -7,24 +7,25 @@ MINIKUBE_MEMORY_RAM=8000mb
 # Possible values for CPUs: max | 1, 2, 3, 4, 5, ...
 MINIKUBE_CPU=4
 
+# TODO: Add help menu when the user put --help. Show the usage of the env variables
 echo "# --------------------------------------"
 echo "# Check installed packages"
 echo "# --------------------------------------"
 KUBECTL_SUCCESS="The kubectl package is installed."
-KUBECTL_ERROR="The kubectl package is not installed. Please, follow this guide https://kubernetes.io/docs/tasks/tools/install-kubectl/"
+KUBECTL_ERROR="The kubectl package is not installed. Please follow this guide https://kubernetes.io/docs/tasks/tools/install-kubectl/"
 type kubectl &>/dev/null && echo "${KUBECTL_SUCCESS}" || echo "${KUBECTL_ERROR}"
 
 MINIKUBE_SUCCESS="The minikube package is installed."
-MINIKUBE_ERROR="The minikube package is not installed. Please, follow this guide https://minikube.sigs.k8s.io/docs/start/"
+MINIKUBE_ERROR="The minikube package is not installed. Please follow this guide https://minikube.sigs.k8s.io/docs/start/"
 type minikube &>/dev/null && echo "${MINIKUBE_SUCCESS}" || echo "${MINIKUBE_ERROR}"
 
 HELM_SUCCESS="The helm package is installed."
-HELM_ERROR="The helm package is not installed. Please, follow this guide https://helm.sh/docs/intro/install/"
+HELM_ERROR="The helm package is not installed. Please follow this guide https://helm.sh/docs/intro/install/"
 type helm &>/dev/null && echo "${HELM_SUCCESS}" || echo "${HELM_ERROR}"
 
 echo ""
 echo "# --------------------------------------"
-echo "# Celan local environment"
+echo "# Clean local environment"
 echo "# --------------------------------------"
 
 echo "┌──────────────────────────────────────────────┐"
@@ -52,13 +53,14 @@ if [[ "${WILL_DELETE_MINIKUBE,,}" == "y" ]]; then
   minikube delete --all=true
 fi
 
-MINIKUBE_HAS_NOT_PROFILE="The minikube not has profile. It will create a new one."
+MINIKUBE_HAS_NOT_PROFILE="The minikube does not have a profile. It will create a new one."
 minikube status | grep "not found" &>/dev/null && {
   echo "${MINIKUBE_HAS_NOT_PROFILE}"
   minikube status || true
   minikube start --memory="${MINIKUBE_MEMORY_RAM}" --cpus="${MINIKUBE_CPU}"
 }
 
+exit 0
 echo "┌─────────────────────────────────────┐"
 echo "⟾ Check default namespace for kubectl │"
 echo "└─────────────────────────────────────┘"
@@ -116,7 +118,7 @@ minikube status | grep "Stopped" &>/dev/null && {
 echo "┌────────────────────────┐"
 echo "⟾ Helm: Install Postgres │"
 echo "└────────────────────────┘"
-KUBECTL_HAS_PVC="The kubectl has the Postgres PVC. It will delete."
+KUBECTL_HAS_PVC="The kubectl has the Postgres PVC. Deleting."
 kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
   echo "${KUBECTL_HAS_PVC}"
   kubectl delete pvc data-postgres-postgresql-0
@@ -127,7 +129,7 @@ helm install postgres bitnami/postgresql -f ../postgres_values.yaml
 echo "┌──────────────────────────┐"
 echo "⟾ kubectl: Postgres set up │"
 echo "└──────────────────────────┘"
-echo "⤑ It will wait until the Postgres is set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the Postgres is set up. It could take several seconds or minutes."
 while [[ "$(kubectl get pods postgres-postgresql-0 -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers || false)" != true ]]; do
   echo ""
   kubectl get pods postgres-postgresql-0 || true
@@ -141,7 +143,7 @@ echo "⟾ kubectl: Rucio - Init Container │"
 echo "└─────────────────────────────────┘"
 kubectl delete pod init 2>/dev/null || true
 kubectl apply -f ../init-pod.yaml
-echo "⤑ It will wait until the Rucio Init Container is set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the Rucio Init Container is set up. It could take several seconds or minutes."
 while [[ "$(kubectl get pods init -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
   echo ""
   kubectl get pods init
@@ -257,7 +259,7 @@ kubectl logs "${FTS_SERVER_POD}"
 echo "┌───────────────────────┐"
 echo "⟾ helm: Install Daemons │"
 echo "└───────────────────────┘"
-echo "⤑ It will wait until the Daemons are set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the Daemons are set up. It could take several seconds or minutes."
 helm delete daemons 2>/dev/null || true
 helm install daemons rucio/rucio-daemons -f ../daemons.yaml
 mapfile -t DAEMONS_PODS < <(kubectl get pods | grep ^daemons- | awk '{print $1}')
