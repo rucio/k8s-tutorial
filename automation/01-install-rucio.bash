@@ -55,7 +55,7 @@ case "$1" in
   ;;
 -*) # Error
   echo "Error: Unknown option: $1" >&2
-  display_help
+  echo "Help ▶ $0 --help" >&2
   exit 1
   ;;
 esac
