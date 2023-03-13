@@ -111,8 +111,10 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 * Install the Rucio server and wait for it to come online:
 
       helm install server rucio/rucio-server -f server.yaml
-
-      kubectl logs -f server-rucio-server-7fffc4665d-ts67v rucio-server
+      
+      RUCIO_SERVER=$(kubectl get pods | grep ^server-rucio-server- | grep -v auth- | awk '{print $1}')
+      echo ${RUCIO_SERVER}
+      kubectl logs -f ${RUCIO_SERVER} rucio-server
 
 * Prepare a client container for interactive use:
 
