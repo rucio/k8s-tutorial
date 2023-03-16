@@ -65,6 +65,9 @@ _NOTE: Before executing the following commands, please change directory to the c
 
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
+_NOTE: You can execute this Linux script for easier installation and understanding:
+[./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
+
 * Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find and remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
 
 * If at any point `helm` fails to install, before re-installing, remove the previous failed installation by
@@ -159,6 +162,9 @@ For Windows:
       kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
 
 ## Rucio usage
+
+_NOTE: You can execute this Linux script for easier set up and understanding:
+[./automation/02-set-up-rucio.bash](./automation/02-set-up-rucio.bash)._
 
 * Jump into the client container
 
