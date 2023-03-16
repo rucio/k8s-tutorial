@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+cd "$(dirname "$0")"
+
 # Minikube
 MINIKUBE_ARGS=()
 if [[ -n "${MINIKUBE_MEMORY}" ]]; then
@@ -175,19 +177,13 @@ kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
   kubectl delete pvc data-postgres-postgresql-0
 }
 helm delete postgres 2>/dev/null || true
-helm install postgres bitnami/postgresql -f ../postgres_values.yaml
+helm install postgres bitnami/postgresql -f ../values-postgres.yaml
 
 echo "┌──────────────────────────┐"
 echo "⟾ kubectl: Postgres set up │"
 echo "└──────────────────────────┘"
 echo "⤑ Waiting until the Postgres is set up. It could take several seconds or minutes."
-while [[ "$(kubectl get pods postgres-postgresql-0 -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers || false)" != true ]]; do
-  echo ""
-  kubectl get pods postgres-postgresql-0 || true
-  sleep 4
-done
-echo ""
-kubectl get pods postgres-postgresql-0 || true
+kubectl rollout status statefulset postgres-postgresql
 
 echo "┌─────────────────────────────────┐"
 echo "⟾ kubectl: Rucio - Init Container │"
@@ -195,18 +191,7 @@ echo "└───────────────────────�
 kubectl delete pod init 2>/dev/null || true
 kubectl apply -f ../init-pod.yaml
 echo "⤑ Waiting until the Rucio Init Container is set up. It could take several seconds or minutes."
-while [[ "$(kubectl get pods init -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-  echo ""
-  kubectl get pods init
-  if [[ "$(kubectl get pods init -o custom-columns=STATUS:.status.containerStatuses[*].state.terminated.reason --no-headers)" == "Error" ]]; then
-    echo ""
-    echo "ERROR: The Init Container has an error. Verify that the postgres container is finished and ready."
-    exit 1
-  fi
-  sleep 3
-done
-echo ""
-kubectl get pods init
+kubectl wait --for=condition=Ready pod/init
 
 echo "┌──────────────────────────────────────────┐"
 echo "⟾ kubectl: Logs for Rucio - Init Container │"
@@ -217,33 +202,19 @@ echo "┌───────────────────────�
 echo "⟾ helm: Install Rucio server │"
 echo "└────────────────────────────┘"
 helm delete server 2>/dev/null || true
-helm install server rucio/rucio-server -f ../server.yaml
-RUCIO_SERVER_POD=$(kubectl get pods | grep ^server-rucio-server- | grep -v auth- | awk '{print $1}')
-echo "RUCIO_SERVER_POD: ${RUCIO_SERVER_POD}"
-while [[ "$(kubectl get pods "${RUCIO_SERVER_POD}" -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true,true ]]; do
-  echo ""
-  kubectl get pods "${RUCIO_SERVER_POD}"
-  sleep 4
-done
-echo ""
-kubectl get pods "${RUCIO_SERVER_POD}"
+helm install server rucio/rucio-server -f ../values-server.yaml
+kubectl rollout status deployment server-rucio-server
 
 echo "┌────────────────────────────────┐"
 echo "⟾ kubectl: Logs for Rucio server │"
 echo "└────────────────────────────────┘"
-kubectl logs "${RUCIO_SERVER_POD}" rucio-server
+kubectl logs deployment/server-rucio-server -c rucio-server
 
 echo "┌───────────────────────────────────┐"
 echo "⟾ kubectl: Install client container │"
 echo "└───────────────────────────────────┘"
 kubectl apply -f ../client.yaml
-while [[ "$(kubectl get pods client -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-  echo ""
-  kubectl get pods client
-  sleep 2
-done
-echo ""
-kubectl get pods client
+kubectl wait --for=condition=Ready pod/client
 
 echo "┌─────────────────────────────────┐"
 echo "⟾ kubectl: Check client container │"
@@ -258,79 +229,40 @@ kubectl apply -f ../xrd.yaml
 XRD_CONTAINERS=(xrd1 xrd2 xrd3)
 echo "XRD_CONTAINERS: ${XRD_CONTAINERS[*]}"
 for XRD_CONTAINER in "${XRD_CONTAINERS[@]}"; do
-  echo ""
-  echo "XRD_CONTAINER: ${XRD_CONTAINER}"
-  while [[ "$(kubectl get pods "${XRD_CONTAINER}" -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-    echo ""
-    kubectl get pods "${XRD_CONTAINER}"
-    sleep 2
-  done
-  echo ""
-  kubectl get pods "${XRD_CONTAINER}"
+  kubectl wait --for=condition=Ready pod/$XRD_CONTAINER
 done
 
 echo "┌───────────────────────────────────────┐"
 echo "⟾ kubectl: Install FTS database (MySQL) │"
 echo "└───────────────────────────────────────┘"
 kubectl apply -f ../ftsdb.yaml
-FTS_MYSQL_POD=$(kubectl get pods | grep ^fts-mysql- | awk '{print $1}')
-echo "FTS_MYSQL_POD: ${FTS_MYSQL_POD}"
-while [[ "$(kubectl get pods "${FTS_MYSQL_POD}" -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-  echo ""
-  kubectl get pods "${FTS_MYSQL_POD}"
-  sleep 1
-done
-echo ""
-kubectl get pods "${FTS_MYSQL_POD}"
+kubectl rollout status deployment fts-mysql
 
 echo "┌────────────────────────────────────────┐"
 echo "⟾ kubectl: Logs for FTS database (MySQL) │"
 echo "└────────────────────────────────────────┘"
-kubectl logs "${FTS_MYSQL_POD}"
+kubectl logs deployment/fts-mysql
 
 echo "┌──────────────────────┐"
 echo "⟾ kubectl: Install FTS │"
 echo "└──────────────────────┘"
 kubectl apply -f ../fts.yaml
-FTS_SERVER_POD=$(kubectl get pods | grep ^fts-server- | awk '{print $1}')
-echo "FTS_SERVER_POD: ${FTS_SERVER_POD}"
-while [[ "$(kubectl get pods "${FTS_SERVER_POD}" -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-  echo ""
-  kubectl get pods "${FTS_SERVER_POD}"
-  sleep 1
-done
-echo ""
-kubectl get pods "${FTS_SERVER_POD}"
+kubectl rollout status deployment fts-server
 
 echo "┌───────────────────────┐"
 echo "⟾ kubectl: Logs for FTS │"
 echo "└───────────────────────┘"
-kubectl logs "${FTS_SERVER_POD}"
+kubectl logs deployment/fts-server
 
 echo "┌───────────────────────┐"
 echo "⟾ helm: Install Daemons │"
 echo "└───────────────────────┘"
-echo "⤑ Waiting until the Daemons are set up. It could take several seconds or minutes."
 helm delete daemons 2>/dev/null || true
-helm install daemons rucio/rucio-daemons -f ../daemons.yaml
-mapfile -t DAEMONS_PODS < <(kubectl get pods | grep ^daemons- | awk '{print $1}')
-echo "DAEMONS_PODS: ${DAEMONS_PODS[*]}"
-for DAEMON_POD in "${DAEMONS_PODS[@]}"; do
-  echo ""
-  echo "DAEMON_POD: ${DAEMON_POD}"
-  while [[ "$(kubectl get pods "${DAEMON_POD}" -o custom-columns=STATUS:.status.containerStatuses[*].ready --no-headers)" != true ]]; do
-    echo ""
-    kubectl get pods "${DAEMON_POD}"
-    sleep 1
-  done
-  echo ""
-  kubectl get pods "${DAEMON_POD}"
+echo "⤑ Waiting until the Daemons are set up. It could take several seconds or minutes."
+helm install daemons rucio/rucio-daemons -f ../values-daemons.yaml
+for DAEMON in $(kubectl get deployment -l='app-group=rucio-daemons' -o name); do
+    kubectl rollout status $DAEMON
 done
-
-echo "┌────────────────────────────────────────────────────┐"
-echo "⟾ kubectl: Run FTS storage authentication delegation │"
-echo "└────────────────────────────────────────────────────┘"
-kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
 
 echo""
 echo""

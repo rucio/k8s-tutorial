@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: rucio/rucio-server
+  tag: latest
+
+config:
+  database:
+    default: "postgresql://rucio:secret@postgres-postgresql/rucio"
+    schema: "test"
+
+ingress:
+  enabled: true
+  path: /
+  hosts: 
+    - rucio-server.info
