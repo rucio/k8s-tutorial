@@ -48,7 +48,7 @@ spec:
     - name: RUCIO_CFG_RUCIO_HOST
       value: http://server-rucio-server
     - name: RUCIO_CFG_AUTH_HOST
-      value: http://server-rucio-server-auth
+      value: http://server-rucio-server
     - name: RUCIO_CFG_AUTH_TYPE
       value: userpass
     - name: RUCIO_CFG_USERNAME

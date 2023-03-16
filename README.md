@@ -83,7 +83,7 @@ _NOTE: You can execute this Linux script for easier installation and understandi
 
 * Install a fresh new Rucio database (PostgreSQL).
 
-      helm install postgres bitnami/postgresql -f postgres_values.yaml
+      helm install postgres bitnami/postgresql -f values-postgres.yaml
 
 * Wait for PostgreSQL to finish starting. Output should be STATUS:Running.
 
@@ -113,11 +113,9 @@ _NOTE: You can execute this Linux script for easier installation and understandi
 
 * Install the Rucio server and wait for it to come online:
 
-      helm install server rucio/rucio-server -f server.yaml
+      helm install server rucio/rucio-server -f values-server.yaml
       
-      RUCIO_SERVER=$(kubectl get pods | grep ^server-rucio-server- | grep -v auth- | awk '{print $1}')
-      echo ${RUCIO_SERVER}
-      kubectl logs -f ${RUCIO_SERVER} rucio-server
+      kubectl logs -f deployment/server-rucio-server rucio-server
 
 * Prepare a client container for interactive use:
 
@@ -155,7 +153,7 @@ For Windows:
 
 * Install the Rucio daemons:
 
-      helm install daemons rucio/rucio-daemons -f daemons.yaml
+      helm install daemons rucio/rucio-daemons -f values-daemons.yaml
 
 * Run FTS storage authentication delegation once:
 

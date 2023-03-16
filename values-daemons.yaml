@@ -9,7 +9,7 @@ judgeEvaluatorCount: 1
 judgeInjectorCount: 1
 judgeRepairerCount: 1
 undertakerCount: 1
-reaper2Count: 1
+reaperCount: 1
 
 abacusAccount:
   threads: 1
@@ -31,7 +31,7 @@ abacusRse:
       memory: "256Mi"
       cpu: "50m"
 
-reaper2:
+reaper:
   greedy: 1
   threads: 1
   sleepTime: 60
@@ -42,6 +42,9 @@ reaper2:
     limits:
       memory: "256Mi"
       cpu: "100m"
+  extraSecretMounts:
+    - secretFullName: daemons-rucio-ca-bundle-reaper
+      mountPath: /etc/grid-security/certificates/
 
 undertaker:
   threads: 1
@@ -79,6 +82,7 @@ conveyorPoller:
 
 conveyorFinisher:
   threads: 1
+  sleepTime: 10
   resources:
     requests:
       memory: "64Mi"
@@ -129,23 +133,36 @@ judgeInjector:
       memory: "256Mi"
       cpu: "200m"
 
-reaper:
-  workers: 60
-  threadsPerWorker: 1
-  greedy: 1
-
 image:
   tag: latest
   pullPolicy: Always
+
+useDeprecatedImplicitSecrets: false
+
+secretMounts:
+  - secretFullName: daemons-rucio-x509up
+    mountPath: /opt/proxy
+  - secretFullName: daemons-rucio-ca-bundle
+    mountPath: /opt/certs/
 
 ftsRenewal:
   enabled: 1
   image:
     repository: rucio/fts-cron
-    tag: latest
-  vo: "tutorial"
-  voms: "tutorial"
+    tag: java
+    pullPolicy: Always
+  script: "tutorial"
+  vos:
+    - vo: "tutorial"
+      voms: "tutorial"
   servers: "https://fts:8446"
+  secretMounts:
+    - secretFullName: daemons-fts-cert
+      mountPath: /opt/rucio/certs/usercert.pem
+      subPath: usercert.pem
+    - secretFullName: daemons-fts-key
+      mountPath: /opt/rucio/keys/userkey.pem
+      subPath: userkey.pem
 
 config:
   database:
