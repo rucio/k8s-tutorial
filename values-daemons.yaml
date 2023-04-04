@@ -43,8 +43,12 @@ reaper:
       memory: "256Mi"
       cpu: "100m"
   extraSecretMounts:
-    - secretFullName: daemons-rucio-ca-bundle-reaper
-      mountPath: /etc/grid-security/certificates/
+    - secretFullName: x509up
+      mountPath: /opt/proxy/x509up
+      subPath: x509up
+  additionalEnvs:
+    - name: X509_USER_PROXY
+      value: /opt/proxy/x509up
 
 undertaker:
   threads: 1
@@ -67,6 +71,13 @@ conveyorTransferSubmitter:
     limits:
       memory: "256Mi"
       cpu: "200m"
+  extraSecretMounts:
+    - secretFullName: x509up
+      mountPath: /opt/proxy/x509up
+      subPath: x509up
+  config:
+    conveyor:
+      usercert: "/opt/proxy/x509up"
 
 conveyorPoller:
   threads: 1
@@ -79,6 +90,13 @@ conveyorPoller:
     limits:
       memory: "256Mi"
       cpu: "200m"
+  extraSecretMounts:
+    - secretFullName: x509up
+      mountPath: /opt/proxy/x509up
+      subPath: x509up
+  config:
+    conveyor:
+      usercert: "/opt/proxy/x509up"
 
 conveyorFinisher:
   threads: 1
@@ -140,29 +158,43 @@ image:
 useDeprecatedImplicitSecrets: false
 
 secretMounts:
-  - secretFullName: daemons-rucio-x509up
-    mountPath: /opt/proxy
-  - secretFullName: daemons-rucio-ca-bundle
-    mountPath: /opt/certs/
+  - volumeName: grid-security-ca
+    secretFullName: ca-cert
+    mountPath: /etc/grid-security/certificates/5fca1cb1.0
+    subPath: tls.cert
 
 ftsRenewal:
   enabled: 1
   image:
     repository: rucio/fts-cron
-    tag: java
+    tag: latest-java
     pullPolicy: Always
   script: "tutorial"
   vos:
     - vo: "tutorial"
       voms: "tutorial"
   servers: "https://fts:8446"
+  additionalEnvs:
+    - name: "FETCH_CRL"
+      value: "False"
+    - name: "RUCIO_PROXY_SECRETS"
+      value: "x509up"
   secretMounts:
-    - secretFullName: daemons-fts-cert
+    # The "tutorial" script expects certificates in a very specific, non-configurable, location:
+    # https://github.com/rucio/containers/blob/master/fts-cron/renew_fts_proxy_tutorial.sh.j2
+    - volumeName: rucio-cert
+      secretFullName: hostcert-rucio
       mountPath: /opt/rucio/certs/usercert.pem
-      subPath: usercert.pem
-    - secretFullName: daemons-fts-key
+      subPath: tls.cert
+    - volumeName: rucio-key
+      secretFullName: hostcert-rucio
       mountPath: /opt/rucio/keys/userkey.pem
-      subPath: userkey.pem
+      subPath: tls.key
+      defaultMode: 0600
+    - volumeName: grid-security-ca
+      secretFullName: ca-cert
+      mountPath: /etc/grid-security/certificates/rucio_ca.pem
+      subPath: tls.cert
 
 config:
   database:
@@ -181,8 +213,7 @@ config:
     scheme: "gsiftp,root,https,davs"
     transfertool: "fts3"
     ftshosts: "https://fts:8446"
-    cacert: "/opt/certs/ca.pem"
-    usercert: "/opt/proxy/x509up"
+    cacert: "/etc/grid-security/certificates/5fca1cb1.0"
 
   policy:
     permission: "generic"
