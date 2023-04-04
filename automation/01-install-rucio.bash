@@ -138,6 +138,7 @@ if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
     kubectl delete -f ../xrd.yaml --all=true --recursive=true
     kubectl delete -f ../client.yaml --all=true --recursive=true
     kubectl delete -f ../init-pod.yaml --all=true --recursive=true
+    kubectl delete -k ../secrets
     kubectl get all
     if [[ "$(kubectl get all -o custom-columns=NAME:metadata.name --no-headers | wc -l)" -le 1 ]]; then
       break
@@ -168,6 +169,11 @@ minikube status | grep "Stopped" &>/dev/null && {
   minikube start "${MINIKUBE_ARGS[@]}"
 }
 
+echo "┌────────────────┐"
+echo "⟾ Secrets        │"
+echo "└────────────────┘"
+kubectl apply -k ../secrets
+
 echo "┌────────────────────────┐"
 echo "⟾ Helm: Install Postgres │"
 echo "└────────────────────────┘"
@@ -191,7 +197,7 @@ echo "└───────────────────────�
 kubectl delete pod init 2>/dev/null || true
 kubectl apply -f ../init-pod.yaml
 echo "⤑ Waiting until the Rucio Init Container is set up. It could take several seconds or minutes."
-kubectl wait --for=condition=Ready pod/init
+kubectl wait --timeout=120s --for=condition=Ready pod/init
 
 echo "┌──────────────────────────────────────────┐"
 echo "⟾ kubectl: Logs for Rucio - Init Container │"
@@ -214,7 +220,7 @@ echo "┌───────────────────────�
 echo "⟾ kubectl: Install client container │"
 echo "└───────────────────────────────────┘"
 kubectl apply -f ../client.yaml
-kubectl wait --for=condition=Ready pod/client
+kubectl wait --timeout=120s --for=condition=Ready pod/client
 
 echo "┌─────────────────────────────────┐"
 echo "⟾ kubectl: Check client container │"
@@ -229,7 +235,7 @@ kubectl apply -f ../xrd.yaml
 XRD_CONTAINERS=(xrd1 xrd2 xrd3)
 echo "XRD_CONTAINERS: ${XRD_CONTAINERS[*]}"
 for XRD_CONTAINER in "${XRD_CONTAINERS[@]}"; do
-  kubectl wait --for=condition=Ready pod/$XRD_CONTAINER
+  kubectl --timeout=120s wait --for=condition=Ready pod/$XRD_CONTAINER
 done
 
 echo "┌───────────────────────────────────────┐"
