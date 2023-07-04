@@ -68,6 +68,11 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 _NOTE: You can execute this Linux script for easier installation and understanding:
 [./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
 
+* Install secrets
+  ```bash
+  kubectl apply -k ./secrets
+  ```
+
 * Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find and remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
 
 * If at any point `helm` fails to install, before re-installing, remove the previous failed installation by
