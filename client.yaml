@@ -22,21 +22,21 @@ spec:
     command: ["/bin/bash"]
     args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/usercert.pem /opt/rucio/etc/usercert.pem; cp /tmp/userkey.pem /opt/rucio/etc/userkey.pem; chmod 400 /opt/rucio/etc/userkey.pem; echo ready; while true; do sleep 60; done"]
     env:
-    - name: RUCIO_CFG_RUCIO_HOST
+    - name: RUCIO_CFG_CLIENT_RUCIO_HOST
       value: http://server-rucio-server
-    - name: RUCIO_CFG_AUTH_HOST
+    - name: RUCIO_CFG_CLIENT_AUTH_HOST
       value: http://server-rucio-server
-    - name: RUCIO_CFG_AUTH_TYPE
+    - name: RUCIO_CFG_CLIENT_AUTH_TYPE
       value: userpass
-    - name: RUCIO_CFG_USERNAME
+    - name: RUCIO_CFG_CLIENT_USERNAME
       value: tutorial
-    - name: RUCIO_CFG_PASSWORD
+    - name: RUCIO_CFG_CLIENT_PASSWORD
       value: secret1R
-    - name: RUCIO_CFG_ACCOUNT
+    - name: RUCIO_CFG_CLIENT_ACCOUNT
       value: root
     - name: RUCIO_CFG_CLIENT_CERT
       value: /opt/rucio/etc/usercert.pem
-    - name: RUCIO_CFG_CA_CERT
+    - name: RUCIO_CFG_CLIENT_CA_CERT
       value: /etc/grid-security/certificates/5fca1cb1.0
     - name: RUCIO_CFG_CLIENT_KEY
       value: /opt/rucio/etc/userkey.pem
