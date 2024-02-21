@@ -5,9 +5,13 @@ cd "$(dirname "$0")"
 
 # Minikube
 MINIKUBE_ARGS=()
-if [[ -n "${MINIKUBE_MEMORY}" ]]; then
-  MINIKUBE_ARGS+=("--memory=${MINIKUBE_MEMORY}")
+
+# Set default MINIKUBE_MEMORY to 4000mb if it is not specified
+if [[ -z "${MINIKUBE_MEMORY}" ]]; then
+  MINIKUBE_MEMORY="4000mb"
 fi
+MINIKUBE_ARGS+=("--memory=${MINIKUBE_MEMORY}")
+
 if [[ -n "${MINIKUBE_CPU}" ]]; then
   MINIKUBE_ARGS+=("--cpus=${MINIKUBE_CPU}")
 fi
