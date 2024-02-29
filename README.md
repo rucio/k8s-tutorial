@@ -128,7 +128,7 @@ _NOTE: You can execute this Linux script for easier installation and understandi
 
 * Once the client container is in STATUS:Running, you can jump into it and check if the clients are working:
 
-      kubectl exec -it client /bin/bash
+      kubectl exec -it client -- /bin/bash
 
       rucio whoami
 
