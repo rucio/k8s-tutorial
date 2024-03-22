@@ -136,25 +136,29 @@ _NOTE: You can execute this Linux script for easier installation and understandi
 
       kubectl apply -f xrd.yaml
 
-* Install the FTS database (MySQL) and wait for it to come online.
+* Install the FTS database (MySQL).
 
       kubectl apply -f ftsdb.yaml
 
-      kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
+* Wait for the FTS database to come online.
 
-For Windows:
-      
-      kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-mysql" | sed "s/^pod\///")
+      - For Linux/MacOS:
+        kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
+
+      - For Windows:
+        kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-mysql" | sed "s/^pod\///")
 
 * Install FTS, once the FTS database container is up and running:
 
       kubectl apply -f fts.yaml
 
-      kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
+* Wait for FTS to come online.
 
-For Windows:
+      - For Linux/MacOS:
+            kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
 
-      kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-server" | sed "s/^pod\///")
+      - For Windows:
+            kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-server" | sed "s/^pod\///")
 
 * Install the Rucio daemons:
 
