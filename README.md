@@ -32,7 +32,7 @@ _NOTE: Before executing the following commands, please change directory to the c
 
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
-_NOTE: You can execute this Linux script for easier installation and understanding:
+_NOTE: You can execute this shell script for easier installation and understanding:
 [./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
 
 * Install secrets
