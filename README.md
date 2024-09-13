@@ -37,7 +37,9 @@
 
 * View all containers:
 
-      kubectl get pods / kubectl get pods --all-namespaces
+      kubectl get pods 
+      
+      kubectl get pods --all-namespaces
 
 * View/Tail logfiles of pod:
 
