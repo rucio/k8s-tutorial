@@ -15,7 +15,6 @@
 * Install minikube
 
       https://kubernetes.io/docs/tasks/tools/install-minikube/
-	  https://minikube.sigs.k8s.io/docs/start/
 
 * Start minikube with extra RAM:
 
