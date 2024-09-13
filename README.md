@@ -28,7 +28,7 @@
 
 ## Installation of Rucio + FTS + Storage
 
-_NOTE: Before executing the following commands, please change directory to the cloned repo location_
+_NOTE: Before executing the following commands, please change directory to the cloned `k8s-tutorial` repo location_
 
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
