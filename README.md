@@ -179,7 +179,7 @@ kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
 
 ## Rucio usage
 
-_NOTE: You can execute this Linux script for easier set up and understanding:
+_NOTE: You can execute this shell script for easier set up and understanding:
 [./automation/02-set-up-rucio.bash](./automation/02-set-up-rucio.bash)._
 
 * Jump into the client container
