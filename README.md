@@ -103,7 +103,7 @@ or on bash/fish/zsh shells via:
 
 ```sh
 helm install server rucio/rucio-server -f values-server.yaml
-kubectl logs -f deployment/server-rucio-server rucio-server
+kubectl logs -f deployment/server-rucio-server -c rucio-server
 ```
 
 * Prepare a client container for interactive use:
