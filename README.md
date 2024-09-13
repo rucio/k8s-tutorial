@@ -4,6 +4,10 @@
 
 * Clone this repo to your local machine
 
+```sh
+git clone https://github.com/rucio/k8s-tutorial/
+```
+
 * Install kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
 * Install helm: https://helm.sh/docs/intro/install/
