@@ -26,40 +26,6 @@
       helm repo add bitnami https://charts.bitnami.com/bitnami
       helm repo add rucio https://rucio.github.io/helm-charts
 
-## Some helpful commands
-
-* Activate kubectl completion:
-
-      # Bash
-      source <(kubectl completion bash)
-      # Zsh
-      source <(kubectl completion zsh)
-
-* View all containers:
-
-      kubectl get pods 
-      
-      kubectl get pods --all-namespaces
-
-* View/Tail logfiles of pod:
-
-      kubectl logs <NAME>
-
-      kubectl logs -f <NAME>
-
-* Update helm repositories:
-
-      helm repo update
-
-* Shut down minikube:
-
-      minikube stop
-
-* For more useful commands:
-1. kubectl : [https://kubernetes.io/docs/reference/kubectl/cheatsheet/](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-2. helm : [https://helm.sh/docs/helm/](https://helm.sh/docs/helm/)
-3. minikube : [https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4)
-
 ## Installation of Rucio + FTS + Storage
 
 _NOTE: Before executing the following commands, please change directory to the cloned repo location_
@@ -259,3 +225,36 @@ _NOTE: You can execute this Linux script for easier set up and understanding:
 
       rucio add-dataset test:dataset3
       rucio attach test:dataset3 test:file4
+
+## Some helpful commands
+
+* Activate kubectl completion:
+
+      # Bash
+      source <(kubectl completion bash)
+      # Zsh
+      source <(kubectl completion zsh)
+
+* View all containers:
+
+      kubectl get pods 
+      kubectl get pods --all-namespaces
+
+* View/Tail logfiles of pod:
+
+      kubectl logs <NAME>
+
+      kubectl logs -f <NAME>
+
+* Update helm repositories:
+
+      helm repo update
+
+* Shut down minikube:
+
+      minikube stop
+
+* For more useful commands:
+1. kubectl : [https://kubernetes.io/docs/reference/kubectl/cheatsheet/](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+2. helm : [https://helm.sh/docs/helm/](https://helm.sh/docs/helm/)
+3. minikube : [https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-a4)
