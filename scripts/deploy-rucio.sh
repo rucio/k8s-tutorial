@@ -52,7 +52,7 @@ fi
 
 echo ""
 echo "# --------------------------------------"
-echo "# Start local environment"
+echo "# Start Rucio deployment"
 echo "# --------------------------------------"
 
 echo "┌──────────────────────────┐"
@@ -71,7 +71,7 @@ kubectl apply -k ../secrets
 echo "┌────────────────────────┐"
 echo "⟾ Helm: Install Postgres │"
 echo "└────────────────────────┘"
-KUBECTL_HAS_PVC="The kubectl has the Postgres PVC. Deleting."
+KUBECTL_HAS_PVC="An existing Postgres PersistentVolumeClaim was found. Deleting..."
 kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
   echo "${KUBECTL_HAS_PVC}"
   kubectl delete pvc data-postgres-postgresql-0
@@ -79,18 +79,18 @@ kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
 helm delete postgres 2>/dev/null || true
 helm install postgres bitnami/postgresql -f ../values-postgres.yaml
 
-echo "┌──────────────────────────┐"
-echo "⟾ kubectl: Set up Postgres │"
-echo "└──────────────────────────┘"
-echo "⤑ Waiting until the Postgres is set up; this might take a few minutes..."
+echo "┌────────────────────────────────────────┐"
+echo "⟾ kubectl: Roll out Postgres StatefulSet │"
+echo "└────────────────────────────────────────┘"
+echo "⤑ Waiting until Postgres is set up; this might take a few minutes..."
 kubectl rollout status statefulset postgres-postgresql
 
-echo "┌─────────────────────────────────┐"
-echo "⟾ kubectl: Rucio - Init container │"
-echo "└─────────────────────────────────┘"
+echo "┌───────────────────────────────────────────┐"
+echo "⟾ kubectl: Rucio - Start init container pod │"
+echo "└───────────────────────────────────────────┘"
 kubectl delete pod init 2>/dev/null || true
 kubectl apply -f ../init-pod.yaml
-echo "⤑ Waiting until the Rucio init container is set up; this might take a few minutes..."
+echo "⤑ Waiting until the Rucio init container pod is set up; this might take a few minutes..."
 kubectl wait --timeout=120s --for=condition=Ready pod/init
 
 echo "┌──────────────────────────────────────────┐"
@@ -103,6 +103,10 @@ echo "⟾ Helm: Install Rucio server │"
 echo "└────────────────────────────┘"
 helm delete server 2>/dev/null || true
 helm install server rucio/rucio-server -f ../values-server.yaml
+
+echo "┌────────────────────────────────────────┐"
+echo "⟾ Helm: Check deployment of Rucio server │"
+echo "└────────────────────────────────────────┘"
 kubectl rollout status deployment server-rucio-server
 
 echo "┌────────────────────────────────┐"
@@ -110,9 +114,9 @@ echo "⟾ kubectl: Logs for Rucio server │"
 echo "└────────────────────────────────┘"
 kubectl logs deployment/server-rucio-server -c rucio-server
 
-echo "┌───────────────────────────────────┐"
-echo "⟾ kubectl: Install client container │"
-echo "└───────────────────────────────────┘"
+echo "┌─────────────────────────────────────────────┐"
+echo "⟾ kubectl: Rucio - Start client container pod │"
+echo "└─────────────────────────────────────────────┘"
 kubectl apply -f ../client.yaml
 kubectl wait --timeout=120s --for=condition=Ready pod/client
 
@@ -122,9 +126,9 @@ echo "└───────────────────────�
 kubectl exec client -it -- /etc/profile.d/rucio_init.sh
 kubectl exec client -it -- rucio whoami
 
-echo "┌─────────────────────────────────────────┐"
-echo "⟾ kubectl: Install XRootD storage systems │"
-echo "└─────────────────────────────────────────┘"
+echo "┌──────────────────────────────────────────────┐"
+echo "⟾ kubectl: Start XRootD storage container pods │"
+echo "└──────────────────────────────────────────────┘"
 kubectl apply -f ../xrd.yaml
 XRD_CONTAINERS=(xrd1 xrd2 xrd3)
 echo "XRD_CONTAINERS: ${XRD_CONTAINERS[*]}"
@@ -136,6 +140,10 @@ echo "┌───────────────────────�
 echo "⟾ kubectl: Install FTS database (MySQL) │"
 echo "└───────────────────────────────────────┘"
 kubectl apply -f ../ftsdb.yaml
+
+echo "┌───────────────────────────────────────────────────┐"
+echo "⟾ kubectl: Check deployment of FTS database (MySQL) │"
+echo "└───────────────────────────────────────────────────┘"
 kubectl rollout status deployment fts-mysql
 
 echo "┌────────────────────────────────────────┐"
@@ -143,10 +151,14 @@ echo "⟾ kubectl: Logs for FTS database (MySQL) │"
 echo "└────────────────────────────────────────┘"
 kubectl logs deployment/fts-mysql
 
-echo "┌──────────────────────┐"
-echo "⟾ kubectl: Install FTS │"
-echo "└──────────────────────┘"
+echo "┌─────────────────────────────┐"
+echo "⟾ kubectl: Install FTS server │"
+echo "└─────────────────────────────┘"
 kubectl apply -f ../fts.yaml
+
+echo "┌─────────────────────────────────────────┐"
+echo "⟾ kubectl: Check deployment of FTS server │"
+echo "└─────────────────────────────────────────┘"
 kubectl rollout status deployment fts-server
 
 echo "┌───────────────────────┐"
@@ -160,6 +172,10 @@ echo "└───────────────────────�
 helm delete daemons 2>/dev/null || true
 echo "⤑ Waiting until the daemons are set up; this might take a few minutes..."
 helm install daemons rucio/rucio-daemons -f ../values-daemons.yaml
+
+echo "┌──────────────────────────────────────┐"
+echo "⟾ kubectl: Check deployment of daemons │"
+echo "└──────────────────────────────────────┘"
 for DAEMON in $(kubectl get deployment -l='app-group=rucio-daemons' -o name); do
     kubectl rollout status $DAEMON
 done
