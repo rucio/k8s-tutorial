@@ -57,7 +57,7 @@ case "$1" in
 esac
 
 MINIKUBE_SUCCESS="The minikube package is installed."
-MINIKUBE_ERROR="The minikube package is not installed. Please follow this guide https://minikube.sigs.k8s.io/docs/start/"
+MINIKUBE_ERROR="The minikube package is not installed. Please install it here: https://kubernetes.io/docs/tasks/tools/install-minikube/"
 type minikube &>/dev/null && echo "${MINIKUBE_SUCCESS}" || echo "${MINIKUBE_ERROR}"
 
 echo ""
