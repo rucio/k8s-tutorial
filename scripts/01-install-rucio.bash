@@ -28,7 +28,7 @@ fi
 if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
   while true; do
     echo ""
-    echo "⤑ It will stop all the pods. It could take several seconds or minutes."
+    echo "⤑ Stopping all pods..."
     helm uninstall daemons --debug 2>/dev/null || true
     helm uninstall server --debug 2>/dev/null || true
     helm uninstall postgres --debug 2>/dev/null || true
@@ -46,6 +46,8 @@ if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
     fi
     sleep 4
   done
+    echo ""
+    echo "Pods stopped."
 fi
 
 echo ""
