@@ -28,7 +28,7 @@ fi
 if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
   while true; do
     echo ""
-    echo "⤑ Stopping all pods..."
+    echo "⤑ Stopping all pods; this might take a few minutes..."
     helm uninstall daemons --debug 2>/dev/null || true
     helm uninstall server --debug 2>/dev/null || true
     helm uninstall postgres --debug 2>/dev/null || true
@@ -80,26 +80,26 @@ helm delete postgres 2>/dev/null || true
 helm install postgres bitnami/postgresql -f ../values-postgres.yaml
 
 echo "┌──────────────────────────┐"
-echo "⟾ kubectl: Postgres set up │"
+echo "⟾ kubectl: Set up Postgres │"
 echo "└──────────────────────────┘"
-echo "⤑ Waiting until the Postgres is set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the Postgres is set up; this might take a few minutes..."
 kubectl rollout status statefulset postgres-postgresql
 
 echo "┌─────────────────────────────────┐"
-echo "⟾ kubectl: Rucio - Init Container │"
+echo "⟾ kubectl: Rucio - Init container │"
 echo "└─────────────────────────────────┘"
 kubectl delete pod init 2>/dev/null || true
 kubectl apply -f ../init-pod.yaml
-echo "⤑ Waiting until the Rucio Init Container is set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the Rucio init container is set up; this might take a few minutes..."
 kubectl wait --timeout=120s --for=condition=Ready pod/init
 
 echo "┌──────────────────────────────────────────┐"
-echo "⟾ kubectl: Logs for Rucio - Init Container │"
+echo "⟾ kubectl: Logs for Rucio - Init container │"
 echo "└──────────────────────────────────────────┘"
 kubectl logs init
 
 echo "┌────────────────────────────┐"
-echo "⟾ helm: Install Rucio server │"
+echo "⟾ Helm: Install Rucio server │"
 echo "└────────────────────────────┘"
 helm delete server 2>/dev/null || true
 helm install server rucio/rucio-server -f ../values-server.yaml
@@ -155,10 +155,10 @@ echo "└───────────────────────�
 kubectl logs deployment/fts-server
 
 echo "┌───────────────────────┐"
-echo "⟾ helm: Install Daemons │"
+echo "⟾ helm: Install daemons │"
 echo "└───────────────────────┘"
 helm delete daemons 2>/dev/null || true
-echo "⤑ Waiting until the Daemons are set up. It could take several seconds or minutes."
+echo "⤑ Waiting until the daemons are set up; this might take a few minutes..."
 helm install daemons rucio/rucio-daemons -f ../values-daemons.yaml
 for DAEMON in $(kubectl get deployment -l='app-group=rucio-daemons' -o name); do
     kubectl rollout status $DAEMON
@@ -167,4 +167,4 @@ done
 echo""
 echo""
 echo""
-echo "*** Finished! ***"
+echo "*** Rucio deployment complete. ***"
