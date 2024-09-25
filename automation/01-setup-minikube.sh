@@ -39,16 +39,6 @@ display_help() {
   echo >&2 "  Usage ▶ export MINIKUBE_MEMORY=5000mb MINIKUBE_CPU=3; $0"
   echo >&2 "  Usage ▶ export MINIKUBE_CPU=max; $0"
   echo >&2 "  Usage ▶ export MINIKUBE_MEMORY=max; $0"
-  echo >&2 ""
-  echo >&2 "  Delete environment variables"
-  echo >&2 "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo >&2 "  The environment variables can be deleted using the unset command."
-  echo >&2 "  Usage ▶ unset MINIKUBE_MEMORY MINIKUBE_CPU"
-  echo >&2 ""
-  echo >&2 "  Actual value for environment variables"
-  echo >&2 "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo >&2 "  Currently, these are the parameters which will be used by minikube. Blank means not arguments."
-  echo >&2 "  ▶ minikube start ${MINIKUBE_ARGS[*]}"
 }
 
 case "$1" in
