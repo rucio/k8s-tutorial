@@ -26,7 +26,7 @@ You can skip this step if you have already set up a Kubernetes cluster.
 
 ## Deploy Rucio, FTS and storage
 
-You can perform either an automatic deployment or a manual deployment, as documented below.
+You can perform either an [automatic deployment](#automatic-deployment) or a [manual deployment](#manual-deployment), as documented below.
 
 ### Automatic deployment
 
@@ -211,10 +211,10 @@ kubectl delete jobs/$jobname
 
 Once the setup is complete, you can use Rucio by interacting with it via a client.
 
-You can either run the provided script to showcase the usage of Rucio,
-or you can run the Rucio commands directly
+You can either [run the provided script](#client-usage-showcase-script) to showcase the usage of Rucio,
+or you can manually run the Rucio commands described in the [Manual client usage](#manual-client-usage) section.
 
-#### Script client usage showcase
+### Client usage showcase script
 
 * Run the Rucio usage script:
 
@@ -222,10 +222,9 @@ or you can run the Rucio commands directly
 ./scripts/use-rucio.sh
 ```
 
-#### Manual client usage
+### Manual client usage
 
-
-### Start client container pod for interactive use
+#### Start client container pod for interactive use
 
 ```sh
 kubectl apply -f client.yaml
@@ -239,24 +238,13 @@ kubectl get pod client
 
 Once the client container pod setup is complete, you should see `STATUS: Running`.
 
-* You can verify that the client works by running a shell inside the container:
-
-```sh
-kubectl exec -it client -- /bin/bash
-rucio whoami
-```
-
-#### Rest
-_NOTE: You can execute this shell script for easier set up and understanding:
-[./scripts/02-set-up-rucio.bash](./scripts/02-set-up-rucio.bash)._
-
-* Jump into the client container
+#### Enter interactive shell in the client container
 
 ```sh
 kubectl exec -it client /bin/bash
 ```
 
-* Create the Rucio Storage Elements (RSEs) by
+#### Create the Rucio Storage Elements (RSEs)
 
 ```sh
 rucio-admin rse add XRD1
@@ -264,7 +252,7 @@ rucio-admin rse add XRD2
 rucio-admin rse add XRD3
 ```
 
-* Add the protocol definitions for the storage servers
+#### Add the protocol definitions for the storage servers
 
 ```sh
 rucio-admin rse add-protocol --hostname xrd1 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}' XRD1
@@ -272,7 +260,7 @@ rucio-admin rse add-protocol --hostname xrd2 --scheme root --prefix //rucio --po
 rucio-admin rse add-protocol --hostname xrd3 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}' XRD3
 ```
 
-* Enable FTS
+#### Enable FTS
 
 ```sh
 rucio-admin rse set-attribute --rse XRD1 --key fts --value https://fts:8446
@@ -280,9 +268,9 @@ rucio-admin rse set-attribute --rse XRD2 --key fts --value https://fts:8446
 rucio-admin rse set-attribute --rse XRD3 --key fts --value https://fts:8446
 ```
 
-Note that `8446` is the port exposed by the `fts-server` pod. You can easily view ports opened by a pod by `kubectl describe pod PODNAME`.
+Note that `8446` is the port exposed by the `fts-server` pod. You can view the ports opened by a pod by `kubectl describe pod PODNAME`.
 
-* Fake a full mesh network
+#### Fake a full mesh network
 
 ```sh
 rucio-admin rse add-distance --distance 1 --ranking 1 XRD1 XRD2
@@ -293,7 +281,7 @@ rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD1
 rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD2
 ```
 
-* Indefinite storage quota for root
+#### Indefinite storage quota for root
 
 ```sh
 rucio-admin account set-limits root XRD1 -1
@@ -301,13 +289,13 @@ rucio-admin account set-limits root XRD2 -1
 rucio-admin account set-limits root XRD3 -1
 ```
 
-* Create a default scope for testing
+#### Create a default scope for testing
 
 ```sh
 rucio-admin scope add --account root --scope test
 ```
 
-* Create initial transfer testing data
+#### Create initial transfer testing data
 
 ```sh
 dd if=/dev/urandom of=file1 bs=10M count=1
@@ -316,7 +304,7 @@ dd if=/dev/urandom of=file3 bs=10M count=1
 dd if=/dev/urandom of=file4 bs=10M count=1
 ```
 
-* Upload the files
+#### Upload the files
 
 ```sh
 rucio upload --rse XRD1 --scope test file1
@@ -325,7 +313,7 @@ rucio upload --rse XRD2 --scope test file3
 rucio upload --rse XRD2 --scope test file4
 ```
 
-* Create a few datasets and containers
+#### Create a few datasets and containers
 
 ```sh
 rucio add-dataset test:dataset1
@@ -336,32 +324,31 @@ rucio attach test:dataset2 test:file3 test:file4
 
 rucio add-container test:container
 rucio attach test:container test:dataset1 test:dataset2
+
+rucio add-dataset test:dataset3
+rucio attach test:dataset3 test:file4
 ```
 
-* Create a rule and remember returned rule ID
+#### Create a rule
 
 ```sh
 rucio add-rule test:container 1 XRD3
 ```
 
-* Query the status of the rule until it is completed. Note that the daemons are running with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, so this will take a bit. You can always watch the output of the daemon containers to see what they are doing.
-
-```sh
-rucio rule-info <rule_id>
-```
-
-`rule_id` can be obtained via:
+This command will output a rule ID, which can also be obtained via:
 
 ```sh
 rucio list-rules test:container
 ```
 
-* Add some more complications
+#### Check rule info
+* You can check the information of the rule that has been created:
 
 ```sh
-rucio add-dataset test:dataset3
-rucio attach test:dataset3 test:file4
+rucio rule-info <rule_id>
 ```
+
+As the daemons run with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, this could take a while. You can monitor the output of the daemon containers to see what they are doing.
 
 ## Some helpful commands
 
