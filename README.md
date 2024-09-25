@@ -12,7 +12,10 @@ git clone https://github.com/rucio/k8s-tutorial/
 * Install `helm`: https://helm.sh/docs/intro/install/
 * (Optional) Install `minikube` if you do not have a pre-existing Kubernetes cluster: https://kubernetes.io/docs/tasks/tools/install-minikube/
 
+_NOTE: All following commands should be run from the parent directory of this repository._
+
 ## Set up a Kubernetes cluster
+
 You can skip this step if you have already set up a Kubernetes cluster.
 
 * Run the `minikube` setup script:
@@ -21,16 +24,21 @@ You can skip this step if you have already set up a Kubernetes cluster.
 ./scripts/setup-minikube.sh
 ```
 
-## Installation of Rucio + FTS + Storage
+## Deploy Rucio, FTS and storage
 
-_NOTE: Before executing the following commands, please change directory to the cloned `k8s-tutorial` repo location_
+You can perform either an automatic deployment or a manual deployment, as documented below.
 
-_NOTE: Replace the pod IDs with the ones from your instance, they change every time_
+### Automatic deployment
 
-_NOTE: You can execute this shell script for easier installation and understanding:
-[./scripts/deploy-rucio.sh](./scripts/deploy-rucio.sh)._
+* Run the Rucio deployment script:
 
-* Add Helm chart repositories:
+```sh
+./scripts/deploy-rucio.sh
+```
+
+### Manual deployment
+
+#### Add repositories to Helm
 
 ```sh
 helm repo add stable https://charts.helm.sh/stable
@@ -38,14 +46,153 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add rucio https://rucio.github.io/helm-charts
 ```
 
-* Install secrets:
+#### Apply secrets
 
 ```sh
 kubectl apply -k ./secrets
 ```
 
-* Check if you have previously done this before and want to reset from scratch. In that case, check if there's an old PostgreSQL database lying around, and find and remove it with `kubectl describe pvc` && `kubectl delete pvc data-postgres-postgresql-0`
+#### (Optional) Delete existing Postgres volume claim
 
+If you have done this step in a previous script run, the existing Postgres PersistentVolumeClaim must be deleted.
+
+1. Verify if the PVC exists via:
+
+```sh
+kubectl get pvc data-postgres-postgresql-0
+```
+
+If the PVC exists, the command will return the following message:
+
+```
+NAME                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+data-postgres-postgresql-0   Bound    ...   8Gi        RWO            standard       <unset>                 4s
+```
+
+If the PVC does not exist, the command will return this message:
+
+```
+Error from server (NotFound): persistentvolumeclaims "data-postgres-postgresql-0" not found
+```
+
+You can skip to the next section if the PVC does not exist.
+
+2. If the PVC exists, patch it to allow deletion:
+
+```sh
+kubectl patch pvc data-postgres-postgresql-0 -p '{"metadata":{"finalizers":null}}'
+```
+
+3. Delete the PVC:
+
+```sh
+kubectl delete pvc data-postgres-postgresql-0
+```
+
+4. You might also need to uninstall `postgres` if it is installed:
+
+```sh
+helm uninstall postgres
+```
+
+#### Install Postgres
+
+```sh
+helm install postgres bitnami/postgresql -f values-postgres.yaml
+```
+
+#### Verify that Postgres is running
+
+```sh
+kubectl get pod postgres-postgresql-0
+```
+
+Once the Postgres setup is complete, you should see `STATUS: Running`.
+
+#### Start init container pod
+
+* Once Postgres is running, start the init container pod to set up the Rucio database:
+
+```sh
+kubectl apply -f init-pod.yaml
+```
+
+* This command will take some time to complete. You can follow the relevant logs via: 
+
+```sh
+kubectl logs -f init
+```
+
+#### Verify that the init container pod setup is complete
+
+```sh
+kubectl get pod init
+```
+
+Once the init container pod setup is complete, you should see `STATUS: Completed`.
+
+
+#### Deploy the Rucio server
+
+```sh
+helm install server rucio/rucio-server -f values-server.yaml
+```
+
+* You can check the deployment status via:
+
+```sh
+kubectl rollout status deployment server-rucio-server
+```
+
+#### Start the XRootD (XRD) storage container pods
+
+* This command will deploy three XRD storage container pods.
+
+```sh
+kubectl apply -f xrd.yaml
+```
+
+#### Deploy the FTS database (MySQL)
+
+```sh
+kubectl apply -f ftsdb.yaml
+```
+
+* You can check the deployment status via:
+
+```
+kubectl rollout status deployment fts-mysql
+```
+
+#### Deploy the FTS server
+
+* Once the FTS database deployment is complete, Install the FTS server:
+
+```sh
+kubectl apply -f fts.yaml
+```
+
+* You can check the deployment status via:
+
+```sh
+kubectl rollout status deployment fts-server
+```
+
+#### Deploy the Rucio daemons
+
+```sh
+helm install daemons rucio/rucio-daemons -f values-daemons.yaml
+```
+
+This command might take a few minutes.
+
+
+#### Run FTS storage authentication delegation once
+```sh
+kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
+```
+
+#### Troubleshooting
 * If at any point `helm` fails to install, before re-installing, remove the previous failed installation:
 
 ```sh
@@ -60,126 +207,46 @@ kubectl get jobs # get all jobs
 kubectl delete jobs/$jobname
 ```
 
-* Install a fresh new Rucio database (PostgreSQL).
+## Use Rucio
+
+Once the setup is complete, you can use Rucio by interacting with it via a client.
+
+You can either run the provided script to showcase the usage of Rucio,
+or you can run the Rucio commands directly
+
+#### Script client usage showcase
+
+* Run the Rucio usage script:
 
 ```sh
-helm install postgres bitnami/postgresql -f values-postgres.yaml
+./scripts/use-rucio.sh
 ```
 
-* Wait for PostgreSQL to finish starting. Output should be `STATUS:Running`.
-
-```sh
-kubectl get pods
-```
-
-On bash/fish/zsh shells, you can also get the status of the job updated in real-time via:
-
-```sh
-(TOWATCH=postgres; watch "kubectl get pods --all-namespaces --no-headers |  awk '{if (\$2 ~ \"$TOWATCH\") print \$0}'")
-```
-Here the fourth column represents the status.
-
-Tip: To watch the status any other install, just change value of `TOWATCH` from `postgres` to the name of your current install.
+#### Manual client usage
 
 
-* Run init container once to setup the Rucio database once the PostgreSQL container is running:
-
-```sh
-kubectl apply -f init-pod.yaml
-```
-
-* Watch the output of the init container to check if everything is fine. Pod should finish with `STATUS:Completed`
-
-```sh
-kubectl logs -f init
-```
-
-or on bash/fish/zsh shells via:
-
-```sh
-(TOWATCH=init; watch "kubectl get pods --all-namespaces --no-headers |  awk '{if (\$2 ~ \"$TOWATCH\") print \$0}'")
-```
-
-* Install the Rucio server and wait for it to come online:
-
-```sh
-helm install server rucio/rucio-server -f values-server.yaml
-kubectl logs -f deployment/server-rucio-server -c rucio-server
-```
-
-* Prepare a client container for interactive use:
+### Start client container pod for interactive use
 
 ```sh
 kubectl apply -f client.yaml
 ```
 
-* Once the client container is in `STATUS:Running`, you can jump into it and check if the clients are working:
+* You can verify that the client container is running via:
+
+```sh
+kubectl get pod client
+```
+
+Once the client container pod setup is complete, you should see `STATUS: Running`.
+
+* You can verify that the client works by running a shell inside the container:
 
 ```sh
 kubectl exec -it client -- /bin/bash
 rucio whoami
 ```
 
-* Install the XRootD storage systems. This will start three instances of them.
-
-```sh
-kubectl apply -f xrd.yaml
-```
-
-* Install the FTS database (MySQL).
-
-```sh
-kubectl apply -f ftsdb.yaml
-```
-
-* Wait for the FTS database to come online.
-
-For Linux/MacOS:
-
-```sh
-kubectl logs -f $(kubectl get pods -o NAME | grep fts-mysql | cut -d '/' -f 2)
-```
-
-For Windows:
-
-```sh
-kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-mysql" | sed "s/^pod\///")
-```
-
-* Install FTS, once the FTS database container is up and running:
-
-```sh
-kubectl apply -f fts.yaml
-```
-
-* Wait for FTS to come online.
-
-For Linux/MacOS:
-
-```sh
-kubectl logs -f $(kubectl get pods -o NAME | grep fts-server | cut -d '/' -f 2)
-```
-
-For Windows:
-
-```sh
-kubectl logs -f $(kubectl get pods -o name | findstr /c:"fts-server" | sed "s/^pod\///")
-```
-
-* Install the Rucio daemons:
-
-```sh
-helm install daemons rucio/rucio-daemons -f values-daemons.yaml
-```
-
-* Run FTS storage authentication delegation once:
-
-```sh
-kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
-```
-
-## Rucio usage
-
+#### Rest
 _NOTE: You can execute this shell script for easier set up and understanding:
 [./scripts/02-set-up-rucio.bash](./scripts/02-set-up-rucio.bash)._
 
