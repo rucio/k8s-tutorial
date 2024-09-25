@@ -18,7 +18,7 @@ You can skip this step if you have already set up a Kubernetes cluster.
 * Run the `minikube` setup script:
 
 ```sh
-./automation/setup-minikube.sh
+./scripts/setup-minikube.sh
 ```
 
 
@@ -29,7 +29,7 @@ _NOTE: Before executing the following commands, please change directory to the c
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
 _NOTE: You can execute this shell script for easier installation and understanding:
-[./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
+[./scripts/01-install-rucio.bash](./scripts/01-install-rucio.bash)._
 
 * Add Helm chart repositories:
 
@@ -182,7 +182,7 @@ kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
 ## Rucio usage
 
 _NOTE: You can execute this shell script for easier set up and understanding:
-[./automation/02-set-up-rucio.bash](./automation/02-set-up-rucio.bash)._
+[./scripts/02-set-up-rucio.bash](./scripts/02-set-up-rucio.bash)._
 
 * Jump into the client container
 
