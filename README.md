@@ -12,7 +12,7 @@ git clone https://github.com/rucio/k8s-tutorial/
 * Install `helm`: https://helm.sh/docs/intro/install/
 * (Optional) Install `minikube` if you do not have a pre-existing Kubernetes cluster: https://kubernetes.io/docs/tasks/tools/install-minikube/
 
-_NOTE: All following commands should be run from the parent directory of this repository._
+_NOTE: All following commands should be run from the top-level directory of this repository._
 
 ## Set up a Kubernetes cluster
 
