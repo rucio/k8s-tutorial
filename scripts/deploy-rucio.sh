@@ -34,11 +34,11 @@ if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
     helm uninstall postgres --debug 2>/dev/null || true
     kubectl delete job daemons-renew-fts-proxy-on-helm-install 2>/dev/null || true
     kubectl delete pvc data-postgres-postgresql-0 2>/dev/null || true
-    kubectl delete -f ../fts.yaml --all=true --recursive=true
-    kubectl delete -f ../ftsdb.yaml --all=true --recursive=true
-    kubectl delete -f ../xrd.yaml --all=true --recursive=true
-    kubectl delete -f ../client.yaml --all=true --recursive=true
-    kubectl delete -f ../init-pod.yaml --all=true --recursive=true
+    kubectl delete -f ../manifests/fts.yaml --all=true --recursive=true
+    kubectl delete -f ../manifests/ftsdb.yaml --all=true --recursive=true
+    kubectl delete -f ../manifests/xrd.yaml --all=true --recursive=true
+    kubectl delete -f ../manifests/client.yaml --all=true --recursive=true
+    kubectl delete -f ../manifests/init-pod.yaml --all=true --recursive=true
     kubectl delete -k ../secrets
     kubectl get all
     if [[ "$(kubectl get all -o custom-columns=NAME:metadata.name --no-headers | wc -l)" -le 1 ]]; then
@@ -77,7 +77,7 @@ kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
   kubectl delete pvc data-postgres-postgresql-0
 }
 helm delete postgres 2>/dev/null || true
-helm install postgres bitnami/postgresql -f ../values-postgres.yaml
+helm install postgres bitnami/postgresql -f ../manifests/values-postgres.yaml
 
 echo "┌────────────────────────────────────────┐"
 echo "⟾ kubectl: Roll out Postgres StatefulSet │"
@@ -89,7 +89,7 @@ echo "┌───────────────────────�
 echo "⟾ kubectl: Rucio - Start init container pod │"
 echo "└───────────────────────────────────────────┘"
 kubectl delete pod init 2>/dev/null || true
-kubectl apply -f ../init-pod.yaml
+kubectl apply -f ../manifests/init-pod.yaml
 echo "⤑ Waiting until the Rucio init container pod is set up; this might take a few minutes..."
 kubectl wait --timeout=120s --for=condition=Ready pod/init
 
@@ -102,7 +102,7 @@ echo "┌───────────────────────�
 echo "⟾ Helm: Install Rucio server │"
 echo "└────────────────────────────┘"
 helm delete server 2>/dev/null || true
-helm install server rucio/rucio-server -f ../values-server.yaml
+helm install server rucio/rucio-server -f ../manifests/values-server.yaml
 
 echo "┌────────────────────────────────────────┐"
 echo "⟾ Helm: Check deployment of Rucio server │"
@@ -117,7 +117,7 @@ kubectl logs deployment/server-rucio-server -c rucio-server
 echo "┌──────────────────────────────────────────────┐"
 echo "⟾ kubectl: Start XRootD storage container pods │"
 echo "└──────────────────────────────────────────────┘"
-kubectl apply -f ../xrd.yaml
+kubectl apply -f ../manifests/xrd.yaml
 XRD_CONTAINERS=(xrd1 xrd2 xrd3)
 echo "XRD_CONTAINERS: ${XRD_CONTAINERS[*]}"
 for XRD_CONTAINER in "${XRD_CONTAINERS[@]}"; do
@@ -127,7 +127,7 @@ done
 echo "┌───────────────────────────────────────┐"
 echo "⟾ kubectl: Install FTS database (MySQL) │"
 echo "└───────────────────────────────────────┘"
-kubectl apply -f ../ftsdb.yaml
+kubectl apply -f ../manifests/ftsdb.yaml
 
 echo "┌───────────────────────────────────────────────────┐"
 echo "⟾ kubectl: Check deployment of FTS database (MySQL) │"
@@ -142,7 +142,7 @@ kubectl logs deployment/fts-mysql
 echo "┌─────────────────────────────┐"
 echo "⟾ kubectl: Install FTS server │"
 echo "└─────────────────────────────┘"
-kubectl apply -f ../fts.yaml
+kubectl apply -f ../manifests/fts.yaml
 
 echo "┌─────────────────────────────────────────┐"
 echo "⟾ kubectl: Check deployment of FTS server │"
@@ -159,7 +159,7 @@ echo "⟾ helm: Install daemons │"
 echo "└───────────────────────┘"
 helm delete daemons 2>/dev/null || true
 echo "⤑ Waiting until the daemons are set up; this might take a few minutes..."
-helm install daemons rucio/rucio-daemons -f ../values-daemons.yaml
+helm install daemons rucio/rucio-daemons -f ../manifests/values-daemons.yaml
 
 echo "┌──────────────────────────────────────┐"
 echo "⟾ kubectl: Check deployment of daemons │"

@@ -98,7 +98,7 @@ helm uninstall postgres
 #### Install Postgres
 
 ```sh
-helm install postgres bitnami/postgresql -f values-postgres.yaml
+helm install postgres bitnami/postgresql -f manifests/values-postgres.yaml
 ```
 
 #### Verify that Postgres is running
@@ -114,7 +114,7 @@ Once the Postgres setup is complete, you should see `STATUS: Running`.
 * Once Postgres is running, start the init container pod to set up the Rucio database:
 
 ```sh
-kubectl apply -f init-pod.yaml
+kubectl apply -f manifests/init-pod.yaml
 ```
 
 * This command will take some time to complete. You can follow the relevant logs via: 
@@ -135,7 +135,7 @@ Once the init container pod setup is complete, you should see `STATUS: Completed
 #### Deploy the Rucio server
 
 ```sh
-helm install server rucio/rucio-server -f values-server.yaml
+helm install server rucio/rucio-server -f manifests/values-server.yaml
 ```
 
 * You can check the deployment status via:
@@ -149,13 +149,13 @@ kubectl rollout status deployment server-rucio-server
 * This command will deploy three XRD storage container pods.
 
 ```sh
-kubectl apply -f xrd.yaml
+kubectl apply -f manifests/xrd.yaml
 ```
 
 #### Deploy the FTS database (MySQL)
 
 ```sh
-kubectl apply -f ftsdb.yaml
+kubectl apply -f manifests/ftsdb.yaml
 ```
 
 * You can check the deployment status via:
@@ -169,7 +169,7 @@ kubectl rollout status deployment fts-mysql
 * Once the FTS database deployment is complete, Install the FTS server:
 
 ```sh
-kubectl apply -f fts.yaml
+kubectl apply -f manifests/fts.yaml
 ```
 
 * You can check the deployment status via:
@@ -181,7 +181,7 @@ kubectl rollout status deployment fts-server
 #### Deploy the Rucio daemons
 
 ```sh
-helm install daemons rucio/rucio-daemons -f values-daemons.yaml
+helm install daemons rucio/rucio-daemons -f manifests/values-daemons.yaml
 ```
 
 This command might take a few minutes.
@@ -227,7 +227,7 @@ or you can manually run the Rucio commands described in the [Manual client usage
 #### Start client container pod for interactive use
 
 ```sh
-kubectl apply -f client.yaml
+kubectl apply -f manifests/client.yaml
 ```
 
 * You can verify that the client container is running via:
