@@ -63,9 +63,9 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add rucio https://rucio.github.io/helm-charts
 helm repo update
 
-echo "┌────────────────┐"
-echo "⟾ Secrets        │"
-echo "└────────────────┘"
+echo "┌──────────────────────┐"
+echo "⟾ Apply secrets        │"
+echo "└──────────────────────┘"
 kubectl apply -k ../secrets
 
 echo "┌────────────────────────┐"
