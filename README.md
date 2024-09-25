@@ -14,6 +14,15 @@ git clone https://github.com/rucio/k8s-tutorial/
 
 * Install minikube: https://kubernetes.io/docs/tasks/tools/install-minikube/
 
+## Installation of Rucio + FTS + Storage
+
+_NOTE: Before executing the following commands, please change directory to the cloned `k8s-tutorial` repo location_
+
+_NOTE: Replace the pod IDs with the ones from your instance, they change every time_
+
+_NOTE: You can execute this shell script for easier installation and understanding:
+[./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
+
 * Start minikube with extra RAM:
 
 ```sh
@@ -27,15 +36,6 @@ helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add rucio https://rucio.github.io/helm-charts
 ```
-
-## Installation of Rucio + FTS + Storage
-
-_NOTE: Before executing the following commands, please change directory to the cloned `k8s-tutorial` repo location_
-
-_NOTE: Replace the pod IDs with the ones from your instance, they change every time_
-
-_NOTE: You can execute this shell script for easier installation and understanding:
-[./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
 
 * Install secrets:
 
