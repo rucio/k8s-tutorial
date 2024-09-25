@@ -168,18 +168,6 @@ for DAEMON in $(kubectl get deployment -l='app-group=rucio-daemons' -o name); do
     kubectl rollout status $DAEMON
 done
 
-echo "┌─────────────────────────────────────────────────────────────────┐"
-echo "⟾ kubectl: Rucio - Start client container pod for interactive use │"
-echo "└────────────────────────────────────────────git a─────────────────────┘"
-kubectl apply -f ../client.yaml
-kubectl wait --timeout=120s --for=condition=Ready pod/client
-
-echo "┌─────────────────────────────────┐"
-echo "⟾ kubectl: Check client container │"
-echo "└─────────────────────────────────┘"
-kubectl exec client -it -- /etc/profile.d/rucio_init.sh
-kubectl exec client -it -- rucio whoami
-
 echo""
 echo""
 echo""
