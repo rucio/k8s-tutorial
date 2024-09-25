@@ -66,13 +66,6 @@ case "$1" in
   ;;
 esac
 
-echo "# --------------------------------------"
-echo "# Check installed packages"
-echo "# --------------------------------------"
-KUBECTL_SUCCESS="The kubectl package is installed."
-KUBECTL_ERROR="The kubectl package is not installed. Please follow this guide https://kubernetes.io/docs/tasks/tools/install-kubectl/"
-type kubectl &>/dev/null && echo "${KUBECTL_SUCCESS}" || echo "${KUBECTL_ERROR}"
-
 MINIKUBE_SUCCESS="The minikube package is installed."
 MINIKUBE_ERROR="The minikube package is not installed. Please follow this guide https://minikube.sigs.k8s.io/docs/start/"
 type minikube &>/dev/null && echo "${MINIKUBE_SUCCESS}" || echo "${MINIKUBE_ERROR}"
