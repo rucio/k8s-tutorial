@@ -54,7 +54,7 @@ kubectl apply -k ./secrets
 
 #### (Optional) Delete existing Postgres volume claim
 
-If you have done this step in a previous script run, the existing Postgres PersistentVolumeClaim must be deleted.
+If you have done this step in a previous tutorial deployment on this cluster, the existing Postgres PersistentVolumeClaim must be deleted.
 
 1. Verify if the PVC exists via:
 
