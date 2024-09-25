@@ -241,7 +241,7 @@ Once the client container pod setup is complete, you should see `STATUS: Running
 #### Enter interactive shell in the client container
 
 ```sh
-kubectl exec -it client /bin/bash
+kubectl exec -it client -- /bin/bash
 ```
 
 #### Create the Rucio Storage Elements (RSEs)
