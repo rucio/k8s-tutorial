@@ -21,7 +21,6 @@ You can skip this step if you have already set up a Kubernetes cluster.
 ./scripts/setup-minikube.sh
 ```
 
-
 ## Installation of Rucio + FTS + Storage
 
 _NOTE: Before executing the following commands, please change directory to the cloned `k8s-tutorial` repo location_
@@ -29,7 +28,7 @@ _NOTE: Before executing the following commands, please change directory to the c
 _NOTE: Replace the pod IDs with the ones from your instance, they change every time_
 
 _NOTE: You can execute this shell script for easier installation and understanding:
-[./scripts/01-install-rucio.bash](./scripts/01-install-rucio.bash)._
+[./scripts/deploy-rucio.sh](./scripts/deploy-rucio.sh)._
 
 * Add Helm chart repositories:
 
