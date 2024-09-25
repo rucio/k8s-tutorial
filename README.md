@@ -8,11 +8,19 @@
 git clone https://github.com/rucio/k8s-tutorial/
 ```
 
-* Install kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+* Install `kubectl`: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+* Install `helm`: https://helm.sh/docs/intro/install/
+* (Optional) Install `minikube` if you do not have a pre-existing Kubernetes cluster: https://kubernetes.io/docs/tasks/tools/install-minikube/
 
-* Install helm: https://helm.sh/docs/intro/install/
+## Set up a Kubernetes cluster
+You can skip this step if you have already set up a Kubernetes cluster.
 
-* Install minikube: https://kubernetes.io/docs/tasks/tools/install-minikube/
+* Run the `minikube` setup script:
+
+```sh
+./automation/setup-minikube.sh
+```
+
 
 ## Installation of Rucio + FTS + Storage
 
@@ -22,12 +30,6 @@ _NOTE: Replace the pod IDs with the ones from your instance, they change every t
 
 _NOTE: You can execute this shell script for easier installation and understanding:
 [./automation/01-install-rucio.bash](./automation/01-install-rucio.bash)._
-
-* Start minikube with extra RAM:
-
-```sh
-minikube start --memory='4000mb'
-```
 
 * Add Helm chart repositories:
 
