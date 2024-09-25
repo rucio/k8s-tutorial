@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
+echo "┌─────────────────────────────────────────────────────────────────┐"
+echo "⟾ kubectl: Rucio - Start client container pod for interactive use │"
+echo "└────────────────────────────────────────────git a─────────────────────┘"
+kubectl apply -f ../manifests/client.yaml
+kubectl wait --timeout=120s --for=condition=Ready pod/client
+
+echo "┌─────────────────────────────────┐"
+echo "⟾ kubectl: Check client container │"
+echo "└─────────────────────────────────┘"
+kubectl exec client -it -- /etc/profile.d/rucio_init.sh
+kubectl exec client -it -- rucio whoami
+
 echo "┌────────────────┐"
 echo "⟾ Run Rucio init │"
 echo "└────────────────┘"
@@ -74,6 +86,8 @@ kubectl exec client -it -- rucio add-dataset test:dataset2
 kubectl exec client -it -- rucio attach test:dataset2 test:file3 test:file4
 kubectl exec client -it -- rucio add-container test:container
 kubectl exec client -it -- rucio attach test:container test:dataset1 test:dataset2
+kubectl exec client -it -- rucio add-dataset test:dataset3
+kubectl exec client -it -- rucio attach test:dataset3 test:file4
 
 echo "┌─────────────────────────────────────────────┐"
 echo "⟾ Create a rule and remember returned rule ID │"
@@ -89,8 +103,7 @@ RULE_ID=$(kubectl exec client -it -- rucio list-rules test:container | tail -n 1
 echo "RULE_ID: ${RULE_ID}"
 kubectl exec client -it -- rucio rule-info "${RULE_ID}"
 
-echo "┌─────────────────────────────┐"
-echo "⟾ Add some more complications │"
-echo "└─────────────────────────────┘"
-kubectl exec client -it -- rucio add-dataset test:dataset3
-kubectl exec client -it -- rucio attach test:dataset3 test:file4
+echo""
+echo""
+echo""
+echo "*** Rucio usage showcase complete. ***"
