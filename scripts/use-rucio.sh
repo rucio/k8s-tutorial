@@ -3,7 +3,7 @@ set -e
 
 echo "┌─────────────────────────────────────────────────────────────────┐"
 echo "⟾ kubectl: Rucio - Start client container pod for interactive use │"
-echo "└────────────────────────────────────────────git a─────────────────────┘"
+echo "└─────────────────────────────────────────────────────────────────┘"
 kubectl apply -f ../manifests/client.yaml
 kubectl wait --timeout=120s --for=condition=Ready pod/client
 
