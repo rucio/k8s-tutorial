@@ -25,7 +25,8 @@ if [[ "$(kubectl get all -o custom-columns=NAME:metadata.name --no-headers | wc 
   kubectl get all
   read -rp "Do you want to stop all of these pods, services, etc? (y/N): " WILL_STOP_PODS
 fi
-if [[ "${WILL_STOP_PODS,,}" == "y" ]]; then
+WILL_STOP_PODS=$(echo "${WILL_STOP_PODS}" | tr '[:upper:]' '[:lower:]')
+if [[ "${WILL_STOP_PODS}" == "y" ]]; then
   while true; do
     echo ""
     echo "⤑ Stopping all pods; this might take a few minutes..."
