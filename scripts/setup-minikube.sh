@@ -75,7 +75,9 @@ minikube status | grep "Running" &>/dev/null && {
   minikube status
   read -rp "Do you want to stop the local Kubernetes clusters? (y/N): " WILL_STOP_MINIKUBE
 }
-if [[ "${WILL_STOP_MINIKUBE,,}" == "y" ]]; then
+WILL_STOP_MINIKUBE=$(echo "${WILL_STOP_MINIKUBE}" | tr '[:upper:]' '[:lower:]')
+
+if [[ "${WILL_STOP_MINIKUBE}" == "y" ]]; then
   minikube stop
 fi
 
@@ -86,7 +88,8 @@ minikube status | grep "Stopped" &>/dev/null && {
   minikube status || true
   read -rp "Do you want to delete the local Kubernetes clusters? (y/N): " WILL_DELETE_MINIKUBE
 }
-if [[ "${WILL_DELETE_MINIKUBE,,}" == "y" ]]; then
+WILL_DELETE_MINIKUBE=$(echo "${WILL_DELETE_MINIKUBE}" | tr '[:upper:]' '[:lower:]')
+if [[ "${WILL_DELETE_MINIKUBE}" == "y" ]]; then
   minikube delete --all=true
 fi
 
