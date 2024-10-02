@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+cd "$(dirname "$0")"
+
 echo "┌─────────────────────────────────────────────────────────────────┐"
 echo "⟾ kubectl: Rucio - Start client container pod for interactive use │"
 echo "└─────────────────────────────────────────────────────────────────┘"
