@@ -186,12 +186,6 @@ helm install daemons rucio/rucio-daemons -f manifests/values-daemons.yaml
 
 This command might take a few minutes.
 
-
-#### Run FTS storage authentication delegation once
-```sh
-kubectl create job renew-manual-1 --from=cronjob/daemons-renew-fts-proxy
-```
-
 #### Troubleshooting
 * If at any point `helm` fails to install, before re-installing, remove the previous failed installation:
 
