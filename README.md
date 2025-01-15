@@ -278,9 +278,9 @@ rucio rse distance add --source XRD3 --destination XRD2 --distance 1
 #### Indefinite storage quota for root
 
 ```sh
-rucio-admin account set-limits root XRD1 -1
-rucio-admin account set-limits root XRD2 -1
-rucio-admin account set-limits root XRD3 -1
+rucio account limit add --account root --rses XRD1 --bytes infinity
+rucio account limit add --account root --rses XRD2 --bytes infinity
+rucio account limit add --account root --rses XRD3 --bytes infinity
 ```
 
 #### Create a default scope for testing
