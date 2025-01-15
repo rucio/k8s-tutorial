@@ -324,20 +324,20 @@ rucio did content add --to test:dataset3 --did test:file4
 #### Create a rule
 
 ```sh
-rucio add-rule test:container 1 XRD3
+rucio rule add --did test:container --rses XRD3 --copies 1
 ```
 
 This command will output a rule ID, which can also be obtained via:
 
 ```sh
-rucio list-rules test:container
+rucio rule list --did test:container
 ```
 
 #### Check rule info
 * You can check the information of the rule that has been created:
 
 ```sh
-rucio rule-info <rule_id>
+rucio rule show --rule-id <rule_id>
 ```
 
 As the daemons run with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, this could take a while. You can monitor the output of the daemon containers to see what they are doing.
