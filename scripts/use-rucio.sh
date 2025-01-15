@@ -74,10 +74,8 @@ kubectl exec client -it -- dd if=/dev/urandom of=file4 bs=10M count=1
 echo "┌──────────────────┐"
 echo "⟾ Upload the files │"
 echo "└──────────────────┘"
-kubectl exec client -it -- rucio upload --rse XRD1 --scope test file1
-kubectl exec client -it -- rucio upload --rse XRD1 --scope test file2
-kubectl exec client -it -- rucio upload --rse XRD2 --scope test file3
-kubectl exec client -it -- rucio upload --rse XRD2 --scope test file4
+kubectl exec client -it -- rucio upload --rse XRD1 --scope test --files file1 file2
+kubectl exec client -it -- rucio upload --rse XRD2 --scope test --files file3 file4
 
 echo "┌──────────────────────────────────────┐"
 echo "⟾ Create a few datasets and containers │"
