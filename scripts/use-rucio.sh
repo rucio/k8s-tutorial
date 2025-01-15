@@ -61,7 +61,7 @@ kubectl exec client -it -- rucio account limit add --account root --rses XRD3 --
 echo "┌────────────────────────────────────┐"
 echo "⟾ Create a default scope for testing │"
 echo "└────────────────────────────────────┘"
-kubectl exec client -it -- rucio-admin scope add --account root --scope test
+kubectl exec client -it -- rucio scope add --account root --scope test
 
 echo "┌──────────────────────────────────────┐"
 echo "⟾ Create initial transfer testing data │"

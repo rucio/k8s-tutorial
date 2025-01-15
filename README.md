@@ -286,7 +286,7 @@ rucio account limit add --account root --rses XRD3 --bytes infinity
 #### Create a default scope for testing
 
 ```sh
-rucio-admin scope add --account root --scope test
+rucio scope add --account root --scope test
 ```
 
 #### Create initial transfer testing data
