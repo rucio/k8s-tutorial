@@ -308,17 +308,17 @@ rucio upload --rse XRD2 --scope test --files file3 file4
 #### Create a few datasets and containers
 
 ```sh
-rucio add-dataset test:dataset1
-rucio attach test:dataset1 test:file1 test:file2
+rucio did add --type dataset --did test:dataset1
+rucio did content add --to test:dataset1 --did test:file1 test:file2
 
-rucio add-dataset test:dataset2
-rucio attach test:dataset2 test:file3 test:file4
+rucio did add --type dataset --did test:dataset2
+rucio did content add --to test:dataset2 --did test:file3 test:file4
 
-rucio add-container test:container
-rucio attach test:container test:dataset1 test:dataset2
+rucio did add --type container --did test:container
+rucio did content add --to test:container --did test:dataset1 test:dataset2
 
-rucio add-dataset test:dataset3
-rucio attach test:dataset3 test:file4
+rucio did add --type dataset --did test:dataset3
+rucio did content add --to test:dataset3 --did test:file4
 ```
 
 #### Create a rule
