@@ -80,14 +80,14 @@ kubectl exec client -it -- rucio upload --rse XRD2 --scope test --files file3 fi
 echo "┌──────────────────────────────────────┐"
 echo "⟾ Create a few datasets and containers │"
 echo "└──────────────────────────────────────┘"
-kubectl exec client -it -- rucio add-dataset test:dataset1
-kubectl exec client -it -- rucio attach test:dataset1 test:file1 test:file2
-kubectl exec client -it -- rucio add-dataset test:dataset2
-kubectl exec client -it -- rucio attach test:dataset2 test:file3 test:file4
-kubectl exec client -it -- rucio add-container test:container
-kubectl exec client -it -- rucio attach test:container test:dataset1 test:dataset2
-kubectl exec client -it -- rucio add-dataset test:dataset3
-kubectl exec client -it -- rucio attach test:dataset3 test:file4
+kubectl exec client -it -- rucio did add --type dataset --did test:dataset1
+kubectl exec client -it -- rucio did content add --to test:dataset1 --did test:file1 test:file2
+kubectl exec client -it -- rucio did add --type dataset --did test:dataset2
+kubectl exec client -it -- rucio did content add --to test:dataset2 --did test:file3 test:file4
+kubectl exec client -it -- rucio did add --type container --did test:container
+kubectl exec client -it -- rucio did content add --to test:container --did test:dataset1 test:dataset2
+kubectl exec client -it -- rucio did add --type dataset --did test:dataset3
+kubectl exec client -it -- rucio did content add --to test:dataset3 --did test:file4
 
 echo "┌─────────────────────────────────────────────┐"
 echo "⟾ Create a rule and remember returned rule ID │"
