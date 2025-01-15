@@ -267,12 +267,12 @@ Note that `8446` is the port exposed by the `fts-server` pod. You can view the p
 #### Fake a full mesh network
 
 ```sh
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD1 XRD2
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD1 XRD3
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD2 XRD1
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD2 XRD3
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD1
-rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD2
+rucio rse distance add --source XRD1 --destination XRD2 --distance 1
+rucio rse distance add --source XRD1 --destination XRD3 --distance 1
+rucio rse distance add --source XRD2 --destination XRD1 --distance 1
+rucio rse distance add --source XRD2 --destination XRD3 --distance 1
+rucio rse distance add --source XRD3 --destination XRD1 --distance 1
+rucio rse distance add --source XRD3 --destination XRD2 --distance 1
 ```
 
 #### Indefinite storage quota for root

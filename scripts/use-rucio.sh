@@ -44,12 +44,12 @@ kubectl exec client -it -- rucio-admin rse set-attribute --rse XRD3 --key fts --
 echo "┌──────────────────────────┐"
 echo "⟾ Fake a full mesh network │"
 echo "└──────────────────────────┘"
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD1 XRD2
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD1 XRD3
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD2 XRD1
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD2 XRD3
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD1
-kubectl exec client -it -- rucio-admin rse add-distance --distance 1 --ranking 1 XRD3 XRD2
+kubectl exec client -it -- rucio rse distance add --source XRD1 --destination XRD2 --distance 1
+kubectl exec client -it -- rucio rse distance add --source XRD1 --destination XRD3 --distance 1
+kubectl exec client -it -- rucio rse distance add --source XRD2 --destination XRD1 --distance 1
+kubectl exec client -it -- rucio rse distance add --source XRD2 --destination XRD3 --distance 1
+kubectl exec client -it -- rucio rse distance add --source XRD3 --destination XRD1 --distance 1
+kubectl exec client -it -- rucio rse distance add --source XRD3 --destination XRD2 --distance 1
 
 echo "┌───────────────────────────────────┐"
 echo "⟾ Indefinite storage quota for root │"
