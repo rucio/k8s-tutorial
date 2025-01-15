@@ -241,9 +241,9 @@ kubectl exec -it client -- /bin/bash
 #### Create the Rucio Storage Elements (RSEs)
 
 ```sh
-rucio-admin rse add XRD1
-rucio-admin rse add XRD2
-rucio-admin rse add XRD3
+rucio rse add --rse XRD1
+rucio rse add --rse XRD2
+rucio rse add --rse XRD3
 ```
 
 #### Add the protocol definitions for the storage servers
@@ -257,9 +257,9 @@ rucio-admin rse add-protocol --hostname xrd3 --scheme root --prefix //rucio --po
 #### Enable FTS
 
 ```sh
-rucio-admin rse set-attribute --rse XRD1 --key fts --value https://fts:8446
-rucio-admin rse set-attribute --rse XRD2 --key fts --value https://fts:8446
-rucio-admin rse set-attribute --rse XRD3 --key fts --value https://fts:8446
+rucio rse attribute add --rse XRD1 --key fts --value https://fts:8446
+rucio rse attribute add --rse XRD2 --key fts --value https://fts:8446
+rucio rse attribute add --rse XRD3 --key fts --value https://fts:8446
 ```
 
 Note that `8446` is the port exposed by the `fts-server` pod. You can view the ports opened by a pod by `kubectl describe pod PODNAME`.

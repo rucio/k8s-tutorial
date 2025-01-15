@@ -23,9 +23,9 @@ kubectl exec client -it -- /etc/profile.d/rucio_init.sh
 echo "┌─────────────────┐"
 echo "⟾ Create the RSEs │"
 echo "└─────────────────┘"
-kubectl exec client -it -- rucio-admin rse add XRD1
-kubectl exec client -it -- rucio-admin rse add XRD2
-kubectl exec client -it -- rucio-admin rse add XRD3
+kubectl exec client -it -- rucio rse add --rse XRD1
+kubectl exec client -it -- rucio rse add --rse XRD2
+kubectl exec client -it -- rucio rse add --rse XRD3
 
 echo "┌──────────────────────────────────────────────────────┐"
 echo "⟾ Add the protocol definitions for the storage servers │"
@@ -37,9 +37,9 @@ kubectl exec client -it -- rucio-admin rse add-protocol --hostname xrd3 --scheme
 echo "┌────────────┐"
 echo "⟾ Enable FTS │"
 echo "└────────────┘"
-kubectl exec client -it -- rucio-admin rse set-attribute --rse XRD1 --key fts --value https://fts:8446
-kubectl exec client -it -- rucio-admin rse set-attribute --rse XRD2 --key fts --value https://fts:8446
-kubectl exec client -it -- rucio-admin rse set-attribute --rse XRD3 --key fts --value https://fts:8446
+kubectl exec client -it -- rucio rse attribute add --rse XRD1 --key fts --value https://fts:8446
+kubectl exec client -it -- rucio rse attribute add --rse XRD2 --key fts --value https://fts:8446
+kubectl exec client -it -- rucio rse attribute add --rse XRD3 --key fts --value https://fts:8446
 
 echo "┌──────────────────────────┐"
 echo "⟾ Fake a full mesh network │"
