@@ -92,16 +92,16 @@ kubectl exec client -it -- rucio did content add --to test:dataset3 --did test:f
 echo "┌─────────────────────────────────────────────┐"
 echo "⟾ Create a rule and remember returned rule ID │"
 echo "└─────────────────────────────────────────────┘"
-kubectl exec client -it -- rucio add-rule test:container 1 XRD3
+kubectl exec client -it -- rucio rule add --did test:container --rses XRD3 --copies 1
 
 echo "┌────────────────────────────────────────────────────┐"
 echo "⟾ Query the status of the rule until it is completed │"
 echo "└────────────────────────────────────────────────────┘"
 echo "⤑ It will wait for 90 seconds."
 sleep 90
-RULE_ID=$(kubectl exec client -it -- rucio list-rules test:container | tail -n 1 | awk '{print $1}')
+RULE_ID=$(kubectl exec client -it -- rucio rule list --did test:container | tail -n 1 | awk '{print $1}')
 echo "RULE_ID: ${RULE_ID}"
-kubectl exec client -it -- rucio rule-info "${RULE_ID}"
+kubectl exec client -it -- rucio rule show --rule-id "${RULE_ID}"
 
 echo""
 echo""
