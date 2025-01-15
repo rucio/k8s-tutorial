@@ -54,9 +54,9 @@ kubectl exec client -it -- rucio rse distance add --source XRD3 --destination XR
 echo "┌───────────────────────────────────┐"
 echo "⟾ Indefinite storage quota for root │"
 echo "└───────────────────────────────────┘"
-kubectl exec client -it -- rucio-admin account set-limits root XRD1 -1
-kubectl exec client -it -- rucio-admin account set-limits root XRD2 -1
-kubectl exec client -it -- rucio-admin account set-limits root XRD3 -1
+kubectl exec client -it -- rucio account limit add --account root --rses XRD1 --bytes infinity
+kubectl exec client -it -- rucio account limit add --account root --rses XRD2 --bytes infinity
+kubectl exec client -it -- rucio account limit add --account root --rses XRD3 --bytes infinity
 
 echo "┌────────────────────────────────────┐"
 echo "⟾ Create a default scope for testing │"
