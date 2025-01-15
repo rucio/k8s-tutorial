@@ -301,10 +301,8 @@ dd if=/dev/urandom of=file4 bs=10M count=1
 #### Upload the files
 
 ```sh
-rucio upload --rse XRD1 --scope test file1
-rucio upload --rse XRD1 --scope test file2
-rucio upload --rse XRD2 --scope test file3
-rucio upload --rse XRD2 --scope test file4
+rucio upload --rse XRD1 --scope test --files file1 file2
+rucio upload --rse XRD2 --scope test --files file3 file4
 ```
 
 #### Create a few datasets and containers
