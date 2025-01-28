@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: fts-server
-        image: rucio/fts
+        image: rucio/test-fts
         ports:
         - name: ftsapi
           containerPort: 8446

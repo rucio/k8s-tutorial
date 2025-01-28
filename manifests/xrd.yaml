@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name: xrd1
-      image: rucio/xrootd
+      image: rucio/test-xrootd
       env:
         - name: XRDPORT
           value: "1094"
@@ -60,7 +60,7 @@ metadata:
 spec:
   containers:
     - name: xrd2
-      image: rucio/xrootd
+      image: rucio/test-xrootd
       env:
         - name: XRDPORT
           value: "1094"
@@ -112,7 +112,7 @@ metadata:
 spec:
   containers:
     - name: xrd3
-      image: rucio/xrootd
+      image: rucio/test-xrootd
       env:
         - name: XRDPORT
           value: "1094"
