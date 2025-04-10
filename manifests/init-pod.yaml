@@ -12,7 +12,7 @@
        imagePullPolicy: Always
        env:
          - name: RUCIO_CFG_DATABASE_DEFAULT
-           value: postgresql://rucio:secret@postgres-postgresql/rucio
+           value: postgresql+psycopg://rucio:secret@postgres-postgresql/rucio
          - name: RUCIO_CFG_DATABASE_SCHEMA
            value: test
          - name: RUCIO_CFG_BOOTSTRAP_USERPASS_IDENTITY

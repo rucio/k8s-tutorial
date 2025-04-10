@@ -198,7 +198,7 @@ ftsRenewal:
 
 config:
   database:
-    default: postgresql://rucio:secret@postgres-postgresql/rucio
+    default: postgresql+psycopg://rucio:secret@postgres-postgresql/rucio
     schema: test
 
   messaging_hermes:
