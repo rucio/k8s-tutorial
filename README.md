@@ -241,25 +241,25 @@ kubectl exec -it client -- /bin/bash
 #### Create the Rucio Storage Elements (RSEs)
 
 ```sh
-rucio rse add --rse XRD1
-rucio rse add --rse XRD2
-rucio rse add --rse XRD3
+rucio rse add XRD1
+rucio rse add XRD2
+rucio rse add XRD3
 ```
 
 #### Add the protocol definitions for the storage servers
 
 ```sh
-rucio rse protocol add --host xrd1 --rse XRD1 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
-rucio rse protocol add --host xrd2 --rse XRD2 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
-rucio rse protocol add --host xrd3 --rse XRD3 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
+rucio rse protocol add --host xrd1 XRD1 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
+rucio rse protocol add --host xrd2 XRD2 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
+rucio rse protocol add --host xrd3 XRD3 --scheme root --prefix //rucio --port 1094 --impl rucio.rse.protocols.gfal.Default --domain-json '{"wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}, "lan": {"read": 1, "write": 1, "delete": 1}}'
 ```
 
 #### Enable FTS
 
 ```sh
-rucio rse attribute add --rse XRD1 --key fts --value https://fts:8446
-rucio rse attribute add --rse XRD2 --key fts --value https://fts:8446
-rucio rse attribute add --rse XRD3 --key fts --value https://fts:8446
+rucio rse attribute add XRD1 --key fts --value https://fts:8446
+rucio rse attribute add XRD2 --key fts --value https://fts:8446
+rucio rse attribute add XRD3 --key fts --value https://fts:8446
 ```
 
 Note that `8446` is the port exposed by the `fts-server` pod. You can view the ports opened by a pod by `kubectl describe pod PODNAME`.
@@ -267,26 +267,26 @@ Note that `8446` is the port exposed by the `fts-server` pod. You can view the p
 #### Fake a full mesh network
 
 ```sh
-rucio rse distance add --source XRD1 --destination XRD2 --distance 1
-rucio rse distance add --source XRD1 --destination XRD3 --distance 1
-rucio rse distance add --source XRD2 --destination XRD1 --distance 1
-rucio rse distance add --source XRD2 --destination XRD3 --distance 1
-rucio rse distance add --source XRD3 --destination XRD1 --distance 1
-rucio rse distance add --source XRD3 --destination XRD2 --distance 1
+rucio rse distance add XRD1 XRD2 --distance 1
+rucio rse distance add XRD1 XRD3 --distance 1
+rucio rse distance add XRD2 XRD1 --distance 1
+rucio rse distance add XRD2 XRD3 --distance 1
+rucio rse distance add XRD3 XRD1 --distance 1
+rucio rse distance add XRD3 XRD2 --distance 1
 ```
 
 #### Indefinite storage quota for root
 
 ```sh
-rucio account limit add --account root --rses XRD1 --bytes infinity
-rucio account limit add --account root --rses XRD2 --bytes infinity
-rucio account limit add --account root --rses XRD3 --bytes infinity
+rucio account limit add root --rse XRD1 --bytes infinity
+rucio account limit add root --rse XRD2 --bytes infinity
+rucio account limit add root --rse XRD3 --bytes infinity
 ```
 
 #### Create a default scope for testing
 
 ```sh
-rucio scope add --account root --scope test
+rucio scope add --account root test
 ```
 
 #### Create initial transfer testing data
@@ -301,30 +301,30 @@ dd if=/dev/urandom of=file4 bs=10M count=1
 #### Upload the files
 
 ```sh
-rucio upload --rse XRD1 --scope test --files file1 file2
-rucio upload --rse XRD2 --scope test --files file3 file4
+rucio upload --rse XRD1 --scope test file1 file2
+rucio upload --rse XRD2 --scope test file3 file4
 ```
 
 #### Create a few datasets and containers
 
 ```sh
-rucio did add --type dataset --did test:dataset1
-rucio did content add --to test:dataset1 --did test:file1 test:file2
+rucio did add --type dataset test:dataset1
+rucio did content add -to test:dataset1 test:file1 test:file2
 
-rucio did add --type dataset --did test:dataset2
-rucio did content add --to test:dataset2 --did test:file3 test:file4
+rucio did add --type dataset test:dataset2
+rucio did content add -to test:dataset2 test:file3 test:file4
 
-rucio did add --type container --did test:container
-rucio did content add --to test:container --did test:dataset1 test:dataset2
+rucio did add --type container test:container
+rucio did content add -to test:container test:dataset1 test:dataset2
 
-rucio did add --type dataset --did test:dataset3
-rucio did content add --to test:dataset3 --did test:file4
+rucio did add --type dataset test:dataset3
+rucio did content add -to test:dataset3 test:file4
 ```
 
 #### Create a rule
 
 ```sh
-rucio rule add --did test:container --rses XRD3 --copies 1
+rucio rule add test:container --rses XRD3 --copies 1
 ```
 
 This command will output a rule ID, which can also be obtained via:
@@ -337,7 +337,7 @@ rucio rule list --did test:container
 * You can check the information of the rule that has been created:
 
 ```sh
-rucio rule show --rule-id <rule_id>
+rucio rule show <rule_id>
 ```
 
 As the daemons run with long sleep cycles (e.g. 30 seconds, 60 seconds) by default, this could take a while. You can monitor the output of the daemon containers to see what they are doing.
