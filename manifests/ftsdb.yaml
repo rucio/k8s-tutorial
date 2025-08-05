@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: fts-mysql
-        image: mysql:5
+        image: mysql:8.3
         env:
         - name: MYSQL_USER
           value: fts
