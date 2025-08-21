@@ -3,6 +3,11 @@ set -e
 
 cd "$(dirname "$0")"
 
+echo "┌─────────────────────────┐"
+echo "⟾ Create tutorial namespace │"
+echo "└─────────────────────────┘"
+kubectl create namespace rucio-tutorial --dry-run=client -o yaml | kubectl apply -f -
+kubectl config set-context --current --namespace=rucio-tutorial
 
 echo "# --------------------------------------"
 echo "# Check installed packages"
@@ -30,9 +35,9 @@ if [[ "${WILL_STOP_PODS}" == "y" ]]; then
   while true; do
     echo ""
     echo "⤑ Stopping all pods; this might take a few minutes..."
-    helm uninstall daemons --debug 2>/dev/null || true
-    helm uninstall server --debug 2>/dev/null || true
-    helm uninstall postgres --debug 2>/dev/null || true
+    helm uninstall daemons --namespace rucio-tutorial --debug 2>/dev/null || true
+    helm uninstall server --namespace rucio-tutorial --debug 2>/dev/null || true
+    helm uninstall postgres --namespace rucio-tutorial --debug 2>/dev/null || true
     kubectl delete job daemons-renew-fts-proxy-on-helm-install 2>/dev/null || true
     kubectl delete pvc data-postgres-postgresql-0 2>/dev/null || true
     kubectl delete -f ../manifests/fts.yaml --all=true --recursive=true
@@ -77,8 +82,8 @@ kubectl get pvc data-postgres-postgresql-0 &>/dev/null || false && {
   echo "${KUBECTL_HAS_PVC}"
   kubectl delete pvc data-postgres-postgresql-0
 }
-helm delete postgres 2>/dev/null || true
-helm install postgres bitnami/postgresql -f ../manifests/values-postgres.yaml
+helm delete postgres --namespace rucio-tutorial 2>/dev/null || true
+helm install postgres bitnami/postgresql -f ../manifests/values-postgres.yaml --namespace rucio-tutorial
 
 echo "┌────────────────────────────────────────┐"
 echo "⟾ kubectl: Roll out Postgres StatefulSet │"
@@ -102,8 +107,8 @@ kubectl logs init
 echo "┌────────────────────────────┐"
 echo "⟾ Helm: Install Rucio server │"
 echo "└────────────────────────────┘"
-helm delete server 2>/dev/null || true
-helm install server rucio/rucio-server -f ../manifests/values-server.yaml
+helm delete server --namespace rucio-tutorial 2>/dev/null || true
+helm install server rucio/rucio-server -f ../manifests/values-server.yaml --namespace rucio-tutorial
 
 echo "┌────────────────────────────────────────┐"
 echo "⟾ Helm: Check deployment of Rucio server │"
@@ -158,9 +163,9 @@ kubectl logs deployment/fts-server
 echo "┌───────────────────────┐"
 echo "⟾ helm: Install daemons │"
 echo "└───────────────────────┘"
-helm delete daemons 2>/dev/null || true
+helm delete daemons --namespace rucio-tutorial 2>/dev/null || true
 echo "⤑ Waiting until the daemons are set up; this might take a few minutes..."
-helm install daemons rucio/rucio-daemons -f ../manifests/values-daemons.yaml
+helm install daemons rucio/rucio-daemons -f ../manifests/values-daemons.yaml --namespace rucio-tutorial
 
 echo "┌──────────────────────────────────────┐"
 echo "⟾ kubectl: Check deployment of daemons │"
