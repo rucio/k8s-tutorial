@@ -91,12 +91,6 @@ minikube status | grep "Stopped" &>/dev/null && {
 WILL_DELETE_MINIKUBE=$(echo "${WILL_DELETE_MINIKUBE}" | tr '[:upper:]' '[:lower:]')
 if [[ "${WILL_DELETE_MINIKUBE}" == "y" ]]; then
   echo ""
-  echo "┌───────────────────────────────────────┐"
-  echo "⟾ Cleaning up Rucio resources first... │"
-  echo "└───────────────────────────────────────┘"
-  ./cleanup-rucio.sh
-
-  echo ""
   echo "┌───────────────────────────────┐"
   echo "⟾ Deleting Minikube cluster... │"
   echo "└───────────────────────────────┘"
