@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fts-server
+  namespace: rucio-tutorial 
   labels:
     app: fts
 spec:
@@ -59,6 +60,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fts
+  namespace: rucio-tutorial 
   labels:
     app: fts
 spec:
