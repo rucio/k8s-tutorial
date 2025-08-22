@@ -101,7 +101,7 @@ echo "⤑ It will wait for 90 seconds."
 sleep 90
 RULE_ID=$(kubectl exec client -it -- rucio rule list --did test:container | tail -n 1 | awk '{print $1}')
 echo "RULE_ID: ${RULE_ID}"
-# kubectl exec client -it -- rucio rule show "${RULE_ID}"
+kubectl exec client -it -- rucio rule show "${RULE_ID}"
 
 echo""
 echo""
