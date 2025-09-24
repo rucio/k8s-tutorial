@@ -6,7 +6,7 @@ echo "⟾ Cleanup Rucio tutorial setup │"
 echo "└──────────────────────────────┘"
 
 read -rp "Delete all resources in rucio-tutorial namespace? (y/N): " CONFIRM
-[[ "${CONFIRM,,}" == "y" ]] || exit 0
+[[ "${CONFIRM}" == "y" || "${CONFIRM}" == "Y" ]] || exit 0
 
 # Simple namespace deletion handles everything
 kubectl delete namespace rucio-tutorial --ignore-not-found=true
