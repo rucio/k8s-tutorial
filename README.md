@@ -30,6 +30,8 @@ You can perform either an [automatic deployment](#automatic-deployment) or a [ma
 
 ### Automatic deployment
 
+**Note:** The deployment script creates and switches to the `rucio-tutorial` namespace, so all subsequent `kubectl` and `helm` commands will operate in this namespace context. You can verify your current namespace with `kubectl config view --minify -o jsonpath='{..namespace}'` or manually switch to it with `kubectl config set-context --current --namespace=rucio-tutorial`.
+
 * Run the Rucio deployment script:
 
 ```sh
