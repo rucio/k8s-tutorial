@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: client
+  namespace: rucio-tutorial 
   labels:
     app: client
 spec:

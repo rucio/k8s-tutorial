@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: xrd1
+  namespace: rucio-tutorial 
   labels:
     app: xrd1
 spec:
@@ -38,6 +39,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: xrd1
+  namespace: rucio-tutorial 
   labels:
     app: xrd1
 spec:
@@ -55,6 +57,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: xrd2
+  namespace: rucio-tutorial 
   labels:
     app: xrd2
 spec:
@@ -90,6 +93,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: xrd2
+  namespace: rucio-tutorial 
   labels:
     app: xrd2
 spec:
@@ -107,6 +111,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: xrd3
+  namespace: rucio-tutorial 
   labels:
     app: xrd3
 spec:
@@ -142,6 +147,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: xrd3
+  namespace: rucio-tutorial 
   labels:
     app: xrd3
 spec:

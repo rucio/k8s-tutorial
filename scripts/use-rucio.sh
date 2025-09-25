@@ -3,6 +3,8 @@ set -e
 
 cd "$(dirname "$0")"
 
+kubectl config set-context --current --namespace=rucio-tutorial
+
 echo "┌─────────────────────────────────────────────────────────────────┐"
 echo "⟾ kubectl: Rucio - Start client container pod for interactive use │"
 echo "└─────────────────────────────────────────────────────────────────┘"
