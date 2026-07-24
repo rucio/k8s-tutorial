@@ -1,6 +1,6 @@
 # Rucio Kubernetes Tutorial
 
-Responsible for PR merging in [rucio/k8s-tutorial](https://github.com/rucio/k8s-tutorial/): [Mayank Sharma](https://github.com/maany)
+Responsible for PR merging in [rucio/k8s-tutorial](https://github.com/rucio/k8s-tutorial/): [Benedikt Ziemons](https://github.com/bziemons)
 
 ## Preliminaries
 
